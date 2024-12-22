@@ -127,7 +127,7 @@ sample 3:
 
 When using an Apple Gain Map HDR image as input, the image brightness is incorrect. This is a problem with the system's built-in function and may be fixed in a future system version.
 
-Starting from macOS 15.2, it seems that Apple has limited the maximum display headroom of HDR (in HLG, PQ, and ISO Gain Map) to 4.926, and the part above this brightness will be hard-clipping. And the HLG image will lose this part of the data. Apple Gain Map is not subject to this limitation.
+Starting from macOS 15.2, it seems that Apple has limited the maximum display headroom of HDR (in HLG, PQ, and ISO Gain Map) to 4.926, and the part above this brightness will be hard-clipping (Not feature, just bug, I guess). The HLG image WILL LOSE THIS PART OF THE DATA. Apple Gain Map is not subject to this limitation.
 
 FIXED: ~~It's better to limit PQ HDR range in +2 eV, to avoid losing hightlight details.~~
 

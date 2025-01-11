@@ -19,13 +19,15 @@ Convert any HDR Files to Gain_Map_HDR.heic by toGainMapHDR:
 
 `./toGainMapHDR $file_dir $folder_dir $options`
 
-Supported input format:
+Supported input format: 
 
 * AVIF、JXL、HEIF (in PQ/HLG/Gain map)
 * TIFF (in PQ/HLG/Linear32)
 * PNG (in PQ/HLG)
 * JPG (gain map)
 * EXR、HDR
+
+(Note: Some formats have width/height limitation, only support the image file which could be openned by preview app)
 
 #### System Require
 

@@ -116,13 +116,13 @@ You may need to change the DIR of toGainMapHDR in heic_hdr.py before running. (i
 
 Sample Apple Gain Map HDR files:
 
-sample 1:
+Sample 1: (Wu-kung Mountains as UNSECO Geopark, Jiangxi, China)
 ![DJI_1_0616_D](https://github.com/user-attachments/assets/d4fd48bb-6561-496f-b1ab-083ee1ae8a95)
 
-sample 2:
+Sample 2: (Sanqing Mountain as World Heritage, Jiangxi, China)
 ![DJI_1_0226_D](https://github.com/user-attachments/assets/0a718722-6939-41d3-844d-14517442de05)
 
-sample 3:
+Sample 3: (Kanbula National Park, Qinghai, China)
 ![DJI_1_0927_D](https://github.com/user-attachments/assets/66da879e-d56a-4bae-8185-d2d7d462e10f)
 
 ## Notes

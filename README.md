@@ -61,7 +61,7 @@ Require macOS 15.0+ (Some format support require 15.1+), PLEASE UPGRADE your sys
 
  `./toGainMapHDR ~/Downloads/abc.png ~/Documents/ -q 0.95 -d 10 -c rec2020`
 
- `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -q 0.80 -f jpg`
+ `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -q 0.80 -j`
  
 convert gain map abc.avif to gain map heic file and keep base image:
  

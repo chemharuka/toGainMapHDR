@@ -32,6 +32,9 @@ Supported input format:
 #### System Require
 
 Require macOS 15.0+ (Some format support require 15.1+), PLEASE UPGRADE your system to LATEST version for more compatibility.
+PLEASE UPGRADE your system to LATEST version for more compatibility.
+PLEASE UPGRADE your system to LATEST version for more compatibility.
+PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 #### Options:
 

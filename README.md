@@ -11,6 +11,8 @@ Include:
 
 GUI program created by @vincenttsang [HDR-Gain-Map-Convert](https://github.com/vincenttsang/HDR-Gain-Map-Convert)
 
+Lightroom Plugin created by @fengshenx [LR_GainMap_HDR_Export_Plugin](https://github.com/fengshenx/LR_GainMap_HDR_Export_Plugin)
+
 ## Usage
 
 ### toGainMapHDR

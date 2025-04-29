@@ -39,10 +39,6 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 PLEASE UPGRADE your system to LATEST version for more compatibility.
 
-PLEASE UPGRADE your system to LATEST version for more compatibility.
-
-PLEASE UPGRADE your system to LATEST version for more compatibility.
-
 #### Options:
 
 -q \<value>: image quality (default: 0.85)
@@ -135,9 +131,11 @@ Sample 2: (Sanqing Mountain as World Heritage, Jiangxi, China)
 Sample 3: (Kanbula National Park, Qinghai, China)
 ![DJI_1_0927_D](https://github.com/user-attachments/assets/66da879e-d56a-4bae-8185-d2d7d462e10f)
 
-## Notes
+## Known Issue
 
-When using an Apple Gain Map HDR image as input, the image brightness is incorrect. This is a problem with the system's built-in function and may be fixed in a future system version.
+HDR decoding path mis-handle when large AVIF image (long edge ≥ 8192) as input on Intel Mac. This is a problem with the system's built-in function and may be fixed in a future system version.
+
+When using an Apple Gain Map HDR image as input, output image brightness is incorrect. This is a problem with the system's built-in function and may be fixed in a future system version.
 
 Starting from macOS 15.2, it seems that Apple has limited the maximum display headroom of HDR (in HLG, PQ, and ISO Gain Map) to 4.926, and the part above this brightness will be hard-clipping (Not feature, just bug, I guess). The HLG image WILL LOSE THIS PART OF THE DATA. Apple Gain Map is not subject to this limitation.
 

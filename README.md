@@ -11,6 +11,8 @@ Include:
 
 GUI program created by @vincenttsang [HDR-Gain-Map-Convert](https://github.com/vincenttsang/HDR-Gain-Map-Convert)
 
+Lightroom Plugin created by @fengshenx [LR_GainMap_HDR_Export_Plugin](https://github.com/fengshenx/LR_GainMap_HDR_Export_Plugin)
+
 ## Usage
 
 ### toGainMapHDR
@@ -19,7 +21,7 @@ Convert any HDR Files to Gain_Map_HDR.heic by toGainMapHDR:
 
 `./toGainMapHDR $file_dir $folder_dir $options`
 
-Supported input format:
+Supported input format: 
 
 * AVIF、JXL、HEIF (in PQ/HLG/Gain map)
 * TIFF (in PQ/HLG/Linear32)
@@ -27,9 +29,15 @@ Supported input format:
 * JPG (gain map)
 * EXR、HDR
 
+(Note: Some formats have width/height limitation, only support the image file which could be openned by preview app)
+
 #### System Require
 
-Require macOS 15.0+ (Some format support require 15.1+), PLEASE UPGRADE your system to LATEST version for more compatibility.
+Require macOS 15.0+ (Some format support require 15.1+).
+
+PLEASE UPGRADE your system to LATEST version for more compatibility.
+
+PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 #### Options:
 
@@ -59,7 +67,7 @@ Require macOS 15.0+ (Some format support require 15.1+), PLEASE UPGRADE your sys
 
  `./toGainMapHDR ~/Downloads/abc.png ~/Documents/ -q 0.95 -d 10 -c rec2020`
 
- `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -q 0.80 -f jpg`
+ `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -q 0.80 -j`
  
 convert gain map abc.avif to gain map heic file and keep base image:
  
@@ -114,18 +122,20 @@ You may need to change the DIR of toGainMapHDR in heic_hdr.py before running. (i
 
 Sample Apple Gain Map HDR files:
 
-sample 1:
+Sample 1: (Wu-kung Mountains as UNSECO Geopark, Jiangxi, China)
 ![DJI_1_0616_D](https://github.com/user-attachments/assets/d4fd48bb-6561-496f-b1ab-083ee1ae8a95)
 
-sample 2:
+Sample 2: (Sanqing Mountain as World Heritage, Jiangxi, China)
 ![DJI_1_0226_D](https://github.com/user-attachments/assets/0a718722-6939-41d3-844d-14517442de05)
 
-sample 3:
+Sample 3: (Kanbula National Park, Qinghai, China)
 ![DJI_1_0927_D](https://github.com/user-attachments/assets/66da879e-d56a-4bae-8185-d2d7d462e10f)
 
-## Notes
+## Known Issue
 
-When using an Apple Gain Map HDR image as input, the image brightness is incorrect. This is a problem with the system's built-in function and may be fixed in a future system version.
+HDR decoding path mis-handle when large AVIF image (long edge ≥ 8192) as input on Intel Mac. This is a problem with the system's built-in function and may be fixed in a future system version.
+
+When using an Apple Gain Map HDR image as input, output image brightness is incorrect. This is a problem with the system's built-in function and may be fixed in a future system version.
 
 Starting from macOS 15.2, it seems that Apple has limited the maximum display headroom of HDR (in HLG, PQ, and ISO Gain Map) to 4.926, and the part above this brightness will be hard-clipping (Not feature, just bug, I guess). The HLG image WILL LOSE THIS PART OF THE DATA. Apple Gain Map is not subject to this limitation.
 

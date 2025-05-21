@@ -91,6 +91,7 @@ convert RGB gain map (adaptive HDR) file to monochrome gain map (Apple HDR) heic
 2. Exporting 10-bit heic files will result larger file size (approximately double)
 3. \*\* Monochrome gain map compatible with Google Photos (Android version), Instagram etc. Recommended to use for sharing.
 4. When exporting 8-bit heic photo, color discontinuity may occur in low-texture areas, like clouds, lakes.
+5. Starting from a certain version of macOS, built-in function cannot generate real RGB gain maps, not recommended to use the -b parameter.
 
 ### heic_hdr.py
 
@@ -138,6 +139,8 @@ HDR decoding path mis-handle when large AVIF image (long edge ≥ 8192) as input
 When using an Apple Gain Map HDR image as input, output image brightness is incorrect. This is a problem with the system's built-in function and may be fixed in a future system version.
 
 Starting from macOS 15.2, it seems that Apple has limited the maximum display headroom of HDR (in HLG, PQ, and ISO Gain Map) to 4.926, and the part above this brightness will be hard-clipping (Not feature, just bug, I guess). The HLG image WILL LOSE THIS PART OF THE DATA. Apple Gain Map is not subject to this limitation.
+
+Starting from a certain version of macOS, built-in function cannot generate real RGB gain maps. Not recommended to use the -b parameter anymore, which will result in inconsistent HDR images.
 
 FIXED: ~~It's better to limit PQ HDR range in +2 eV, to avoid losing hightlight details.~~
 

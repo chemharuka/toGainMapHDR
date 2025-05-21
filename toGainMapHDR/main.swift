@@ -206,10 +206,6 @@ while pq_export {
     exit(0)
 }
 
-// export gain map hdr file
-
-let export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image!])
-
 
 // CIFilter and custom filter
 
@@ -324,9 +320,10 @@ if base_image_bool{
     else {
         tonemapped_sdrimage = CIImage(contentsOf: base_image_url!)
     }
+} else {
+    tonemapped_sdrimage = hdr_image?.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":pic_headroom,"inputTargetHeadroom":1.0])
 }
 
-tonemapped_sdrimage = hdr_image?.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":pic_headroom,"inputTargetHeadroom":1.0])
 
 while sdr_export{
     let sdr_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85])
@@ -345,18 +342,21 @@ while sdr_export{
     exit(0)
 }
 
+// export rgb gain map
+
 if !gain_map_mono {
+    let rgb_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image!])
     if jpg_export {
         try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage!,
                                          to: url_export_jpg,
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options:export_options as! [CIImageRepresentationOption : Any])
+                                         options: rgb_export_options as! [CIImageRepresentationOption : Any])
     } else {
         try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
                                          to: url_export_heic,
                                          format: bit_depth,
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options: export_options as! [CIImageRepresentationOption : Any])
+                                         options: rgb_export_options as! [CIImageRepresentationOption : Any])
     }
     exit(0)
 }

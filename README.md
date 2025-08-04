@@ -33,7 +33,7 @@ Supported input format:
 
 #### System Require
 
-Require macOS 15.0+ (Some format support require 15.1+).
+Require macOS 15.0+ (Some format support require 26.0+).
 
 PLEASE UPGRADE your system to LATEST version for more compatibility.
 
@@ -91,7 +91,6 @@ convert RGB gain map (adaptive HDR) file to monochrome gain map (Apple HDR) heic
 2. Exporting 10-bit heic files will result larger file size (approximately double)
 3. \*\* Monochrome gain map compatible with Google Photos (Android version), Instagram etc. Recommended to use for sharing.
 4. When exporting 8-bit heic photo, color discontinuity may occur in low-texture areas, like clouds, lakes.
-5. Starting from a certain version of macOS, built-in function generate real RGB gain maps, not recommended to use the -b parameter.
 
 ### heic_hdr.py
 

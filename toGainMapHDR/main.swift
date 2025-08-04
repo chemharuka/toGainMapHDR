@@ -11,7 +11,7 @@ import CoreImage.CIFilterBuiltins
 import CoreVideo
 
 let ctx = CIContext()
-let help_info = "Usage: PQHDRtoGMHDR <source file> <destination folder> <options>\n       options:\n         -q <value>: image quality (default: 0.85)\n         -b <base_photo>: specify the base photo and output in RGB gain map format\n         -t <text>: Add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple gain map (monochrome) for solving compatibility issue\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
+let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       options:\n         -q <value>: image quality (default: 0.85)\n         -b <base_photo>: specify the base photo and output in RGB gain map format\n         -t <text>: Add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple gain map (monochrome) for solving compatibility issue\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
 guard arguments.count > 2 else {
     print(help_info)
@@ -92,7 +92,7 @@ while index < imageoptions.count {
         }
     case "-b":
         guard index + 1 < imageoptions.count else {
-            print("Error: The -b option requires a argument.")
+            print("Error: The -b option requires an argument.")
             exit(1)
         }
         base_image_url = URL(fileURLWithPath: arguments[index + 4])
@@ -110,7 +110,7 @@ while index < imageoptions.count {
         gain_map_mono = true
     case "-d":
         guard index + 1 < imageoptions.count else {
-            print("Error: The -d option requires a argument.")
+            print("Error: The -d option requires an argument.")
             exit(1)
         }
         let bit_depth_argument = String(arguments[index + 4])
@@ -126,7 +126,7 @@ while index < imageoptions.count {
         }}
     case "-t":
         guard index + 1 < imageoptions.count else {
-            print("Error: The -n option requires a argument.")
+            print("Error: The -n option requires an argument.")
             exit(1)
         }
         let additional_filename = String(arguments[index + 4])
@@ -316,6 +316,7 @@ var tonemapped_sdrimage : CIImage?
 if base_image_bool{
     if CIImage(contentsOf: base_image_url!) == nil {
         print("Warning: Could not load base image, will generate base image by tone mapping.")
+        base_image_bool = false
     }
     else {
         tonemapped_sdrimage = CIImage(contentsOf: base_image_url!)
@@ -342,10 +343,10 @@ while sdr_export{
     exit(0)
 }
 
-// export rgb gain map
-
-if !gain_map_mono {
-    let rgb_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image!])
+// export adaptive RGB gain map image
+if base_image_bool {
+    let rgb_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image!,CIImageRepresentationOption.hdrGainMapAsRGB:true])
+    
     if jpg_export {
         try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage!,
                                          to: url_export_jpg,
@@ -361,7 +362,25 @@ if !gain_map_mono {
     exit(0)
 }
 
-// export monochrome gain map photo which compatible with Google Photos, instagram etc.
+// export adaptive gain map image
+if !gain_map_mono {
+    let adaptive_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image!,CIImageRepresentationOption.hdrGainMapAsRGB:false])
+    if jpg_export {
+        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage!,
+                                         to: url_export_jpg,
+                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                         options: adaptive_export_options as! [CIImageRepresentationOption : Any])
+    } else {
+        try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
+                                         to: url_export_heic,
+                                         format: bit_depth,
+                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                         options: adaptive_export_options as! [CIImageRepresentationOption : Any])
+    }
+    exit(0)
+}
+
+// export monochrome Apple HDR gain map photo which compatible with Google Photos, instagram etc.
 
 
 /*
@@ -400,6 +419,7 @@ default:
 makerApple["33"] = 1.0
 makerApple["48"] = (3.0 - 4.0)/70.0
 */
+
 imageProperties[kCGImagePropertyMakerAppleDictionary as String] = makerApple
 let modifiedImage = tonemapped_sdrimage!.settingProperties(imageProperties)
 

@@ -89,7 +89,10 @@ Ratio for jpg HDR gain map export: (-j -r 0.5)
 
 | ratio 0.1 | ratio0.5 | ratio0.95 |
 | --------- | -------- | --------- |
-|           |          |           |
+| ![test-r=0 1](https://github.com/user-attachments/assets/e81bc17f-b14d-4b57-ab8d-f506717f0c1f)| ![test-r=0 5](https://github.com/user-attachments/assets/5882440a-0a44-4f03-9695-5932fd2490ed) | ![test-r=0 95](https://github.com/user-attachments/assets/e6578536-deae-4523-b8b5-19a48923a908) |
+
+
+
 
 
 

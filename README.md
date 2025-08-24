@@ -67,17 +67,23 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 #### Sample images for options
 
-| quality0.2                                                   | quality0.4                                                   | quality0.6                                                   | quality0.8                                                   | quality1.0                                                   |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![test-q=0 2](https://github.com/user-attachments/assets/f6916630-e607-4393-94ab-531b01217f2f) | ![test-q=0 4](https://github.com/user-attachments/assets/78735c04-91ee-42e8-8793-b4bb4a13f5cf) | ![test-q=0 6](https://github.com/user-attachments/assets/2ce8b0c5-5557-4eb2-a915-6355bdd45005) | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |
+
+
+| quality0.2                                                   | quality0.4                                                   | quality0.6                                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![test-q=0 2](https://github.com/user-attachments/assets/f6916630-e607-4393-94ab-531b01217f2f) | ![test-q=0 4](https://github.com/user-attachments/assets/78735c04-91ee-42e8-8793-b4bb4a13f5cf) | ![test-q=0 6](https://github.com/user-attachments/assets/2ce8b0c5-5557-4eb2-a915-6355bdd45005) |
+| quality0.8                                                   | quality1.0                                                   |                                                              |
+| ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
 
 
-| ratio0.0 | ratio0.2 | ratio0.4 | ratio0.6 |
-| -------- | -------- | -------- | -------- |
-|  ![ratio0.0](https://github.com/user-attachments/assets/f850b48d-724a-47e1-910b-1cb92de2f02a)  | ![ratio0.2](https://github.com/user-attachments/assets/e2787b37-a6cb-434c-8ac5-91874c8e7571) | ![ratio0.4](https://github.com/user-attachments/assets/4ad4650d-f6e1-47ec-b525-77be34eca9b4) | ![ratio0.6](https://github.com/user-attachments/assets/f187a82b-488c-4bd6-8f0c-1b06c2063d8a)|
-| ratio0.8 | ratio0.9 | ratio1.0 |          |
-| ![ratio0.8](https://github.com/user-attachments/assets/0fec25e4-e448-407c-b009-b844fac7f01a) | ![ratio0.9](https://github.com/user-attachments/assets/70c41f93-31bf-433f-abf0-1228aaeffa46) | ![ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91)|          |
+| ratio0.0                                                     | ratio0.2                                                     | ratio0.4                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![ratio0.0](https://github.com/user-attachments/assets/f850b48d-724a-47e1-910b-1cb92de2f02a) | ![ratio0.2](https://github.com/user-attachments/assets/e2787b37-a6cb-434c-8ac5-91874c8e7571) | ![ratio0.4](https://github.com/user-attachments/assets/4ad4650d-f6e1-47ec-b525-77be34eca9b4) |
+| ratio0.6                                                     | ratio0.8                                                     | ratio0.9                                                     |
+| ![ratio0.6](https://github.com/user-attachments/assets/f187a82b-488c-4bd6-8f0c-1b06c2063d8a) | ![ratio0.8](https://github.com/user-attachments/assets/0fec25e4-e448-407c-b009-b844fac7f01a) | ![ratio0.9](https://github.com/user-attachments/assets/70c41f93-31bf-433f-abf0-1228aaeffa46) |
+| ratio1.0                                                     |                                                              |                                                              |
+| ![ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91) |                                                              |                                                              |
 
 
 

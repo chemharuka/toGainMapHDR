@@ -43,6 +43,8 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -q \<value>: image quality (default: 0.85)
 
+-r \<value>: tone mapping ratio (default: 0.4)
+
 -b \<file_path>: specify the base image and output in RGB gain map format.
 
 -t \<text>: add extra text after the output file name.
@@ -51,7 +53,7 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -d \<color depth>: output color depth (default: 8)
 
--g: output Apple gain map HDR \*\*
+-g: output Apple Gain map HDR \*\*
 
 -s: export tone mapped SDR image without HDR gain map
 
@@ -62,6 +64,25 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 -h: export HLG HDR heic image (default in 10-bit)
 
 -help: print help information
+
+#### Sample images for options
+
+quality = 0.2
+![test-q=0 2](https://github.com/user-attachments/assets/f6916630-e607-4393-94ab-531b01217f2f)
+
+quality = 0.4
+![test-q=0 4](https://github.com/user-attachments/assets/78735c04-91ee-42e8-8793-b4bb4a13f5cf)
+
+quality = 0.6
+![test-q=0 6](https://github.com/user-attachments/assets/2ce8b0c5-5557-4eb2-a915-6355bdd45005)
+
+quality = 0.8
+![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b)
+
+quality = 1.0
+![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b)
+
+
 
 #### Sample command：
 

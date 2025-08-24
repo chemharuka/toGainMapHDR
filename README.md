@@ -45,6 +45,10 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -r \<value>: tone mapping ratio (default: 0.4)
 
+    ratio = 0: keep full highlight details
+    ratio = 1: hard clip all parts exceeding SDR range
+    ratio = -1: Only work with -g, generate Apple Gain Map by CIFilter
+
 -b \<file_path>: specify the base image and output in RGB gain map format.
 
 -t \<text>: add extra text after the output file name.

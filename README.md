@@ -67,20 +67,13 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 #### Sample images for options
 
-quality = 0.2
-![test-q=0 2](https://github.com/user-attachments/assets/f6916630-e607-4393-94ab-531b01217f2f)
+| quality0.2                                                   | quality0.4                                                   | quality0.6                                                   | quality0.8                                                   | quality1.0                                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![test-q=0 2](https://github.com/user-attachments/assets/f6916630-e607-4393-94ab-531b01217f2f) | ![test-q=0 4](https://github.com/user-attachments/assets/78735c04-91ee-42e8-8793-b4bb4a13f5cf) | ![test-q=0 6](https://github.com/user-attachments/assets/2ce8b0c5-5557-4eb2-a915-6355bdd45005) | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |
 
-quality = 0.4
-![test-q=0 4](https://github.com/user-attachments/assets/78735c04-91ee-42e8-8793-b4bb4a13f5cf)
 
-quality = 0.6
-![test-q=0 6](https://github.com/user-attachments/assets/2ce8b0c5-5557-4eb2-a915-6355bdd45005)
 
-quality = 0.8
-![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b)
 
-quality = 1.0
-![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b)
 
 
 
@@ -89,19 +82,19 @@ quality = 1.0
  `./toGainMapHDR ~/Downloads/abc.png ~/Documents/ -q 0.95 -d 10 -c rec2020`
 
  `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -q 0.80 -j`
- 
+
 convert gain map abc.avif to gain map heic file and keep base image:
- 
+
  `./toGainMapHDR ~/Downloads/abc.avif ~/Documents/ -b ./Downloads/abc.avif` 
- 
+
 convert abc.tiff to Apple gain map HDR file:
- 
+
  `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g` 
- 
+
 convert abc.tiff to HLG HDR file:
- 
+
  `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -h` 
- 
+
 convert RGB gain map (adaptive HDR) file to monochrome gain map (Apple HDR) heic file:
 
  `./toGainMapHDR ~/Downloads/abc.heic ~/Downloads/ -g -t -mono` 

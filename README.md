@@ -75,7 +75,7 @@ Quality for 8 bit heic SDR export: (-s -q 0.6)
 | quality0.8                                                   | quality1.0                                                   |                                                              |
 | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
-Ratio for 8 bit heic SDR export: (-s -r 0.6)
+Ratio for 8 bit heic SDR export: (-s -r 0.6, then converted to jpg by preview.app)
 
 | ratio0.0                                                     | ratio0.2                                                     | ratio0.4                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -84,6 +84,14 @@ Ratio for 8 bit heic SDR export: (-s -r 0.6)
 | ![ratio0.6](https://github.com/user-attachments/assets/f187a82b-488c-4bd6-8f0c-1b06c2063d8a) | ![ratio0.8](https://github.com/user-attachments/assets/0fec25e4-e448-407c-b009-b844fac7f01a) | ![ratio0.9](https://github.com/user-attachments/assets/70c41f93-31bf-433f-abf0-1228aaeffa46) |
 | ratio1.0                                                     |                                                              |                                                              |
 | ![ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91) |                                                              |                                                              |
+
+Ratio for 8 bit jpg HDR export: (-j -r 0.6), ONLY Safari.app support display HDR
+
+| ratio0.0 | ratio0.2  | ratio0.5 |
+| -------- | --------- | -------- |
+|          |           |          |
+| ratio0.8 | ratio0.95 |          |
+|          |           |          |
 
 
 

@@ -75,7 +75,7 @@ Quality for 8 bit heic SDR export: (-s -q 0.6)
 | quality0.8                                                   | quality1.0                                                   |                                                              |
 | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
-Ratio for 8 bit heic SDR export: (-s -r 0.6, then converted to jpg by preview.app)
+SDR Ratio for 8 bit heic SDR export: (-s -r 0.6, then converted to jpg by preview.app)
 
 | ratio0.0                                                     | ratio0.2                                                     | ratio0.4                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -85,14 +85,13 @@ Ratio for 8 bit heic SDR export: (-s -r 0.6, then converted to jpg by preview.ap
 | ratio1.0                                                     |                                                              |                                                              |
 | ![ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91) |                                                              |                                                              |
 
-Ratio for 8 bit jpg HDR export: (-j -r 0.6), ONLY Safari.app support display HDR
+SDR Ratio for 8 bit jpg HDR export: (-j -r 0.6). Edge.app on macOS not support RGB HDR, using Safari.app.
 
 | ratio0.0 | ratio0.2  | ratio0.5 |
 | -------- | --------- | -------- |
-|          |           |          |
+| ![test-r=0 0](https://github.com/user-attachments/assets/865df214-f2fb-406b-831c-647d2ad6054e) | ![test-r=0 2](https://github.com/user-attachments/assets/877933c9-7618-4e70-a826-0c1c533e8521) | ![test-r=0 5](https://github.com/user-attachments/assets/b37c22cd-5e4b-4362-b835-7909fa217f2e) |
 | ratio0.8 | ratio0.95 |          |
-|          |           |          |
-
+| ![test-r=0 8](https://github.com/user-attachments/assets/f5c9532b-59e2-4f96-9e9b-54c161a77ca7) | ![test-r=0 95](https://github.com/user-attachments/assets/660c8d42-a275-4958-b252-13b7c5aaf8fc) |          |
 
 
 #### Sample command：

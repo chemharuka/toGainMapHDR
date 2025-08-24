@@ -75,9 +75,9 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 | ratio0.0 | ratio0.2 | ratio0.4 | ratio0.6 |
 | -------- | -------- | -------- | -------- |
-|          |          |          |          |
+|  [ratio0.0](https://github.com/user-attachments/assets/f850b48d-724a-47e1-910b-1cb92de2f02a)  | [ratio0.2](https://github.com/user-attachments/assets/e2787b37-a6cb-434c-8ac5-91874c8e7571) | [ratio0.4](https://github.com/user-attachments/assets/4ad4650d-f6e1-47ec-b525-77be34eca9b4) | [ratio0.6](https://github.com/user-attachments/assets/f187a82b-488c-4bd6-8f0c-1b06c2063d8a)|
 | ratio0.8 | ratio0.9 | ratio1.0 |          |
-|          |          |          |          |
+| [ratio0.8](https://github.com/user-attachments/assets/0fec25e4-e448-407c-b009-b844fac7f01a) | [ratio0.9](https://github.com/user-attachments/assets/70c41f93-31bf-433f-abf0-1228aaeffa46) | [ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91)|          |
 
 
 

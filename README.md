@@ -85,14 +85,6 @@ Ratio for 8 bit heic SDR export: (-s -r 0.6)
 | ratio1.0                                                     |                                                              |                                                              |
 | ![ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91) |                                                              |                                                              |
 
-Ratio for heic HDR gain map export: (-g -r 0.5, then convert to jpg by Preview.app)
-
-| ratio 0.1 | ratio0.5 | ratio0.95 |
-| --------- | -------- | --------- |
-| ![test-r=0 1](https://github.com/user-attachments/assets/de5b770c-4736-4c88-bc44-e886aaf4bc06) | ![test-r=0 5](https://github.com/user-attachments/assets/c29f9c1f-5968-4500-8da5-a0d457d5efd4) | ![test-r=0 95](https://github.com/user-attachments/assets/03bbd08a-1aec-4b27-aa2c-7b22330c55b2) |
-
-
-
 
 #### Sample command：
 

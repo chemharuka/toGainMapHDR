@@ -73,7 +73,11 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 
 
-
+| ratio0.0 | ratio0.2 | ratio0.4 | ratio0.6 |
+| -------- | -------- | -------- | -------- |
+|          |          |          |          |
+| ratio0.8 | ratio0.9 | ratio1.0 |          |
+|          |          |          |          |
 
 
 

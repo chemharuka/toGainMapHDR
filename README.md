@@ -47,7 +47,7 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
     ratio = 0: keep full highlight details
     ratio = 1: hard clip all parts exceeding SDR range
-    ratio = -1: Only work with -g, generate Apple Gain Map by CIFilter
+    ratio = -1: only work with -g, generate Apple Gain Map by CIFilter
 
 -b \<file_path>: specify the base image and output in RGB gain map format.
 
@@ -174,15 +174,5 @@ Sample 3: (Kanbula National Park, Qinghai, China)
 
 HDR decoding path mis-handle when large AVIF image (long edge ≥ 8192) as input on Intel Mac. This is a problem with the system's built-in function and may be fixed in a future system version.
 
-When using an Apple Gain Map HDR image as input, output image brightness is incorrect. This is a problem with the system's built-in function and may be fixed in a future system version.
-
-Starting from macOS 15.2, it seems that Apple has limited the maximum display headroom of HDR (in HLG, PQ, and ISO Gain Map) to 4.926, and the part above this brightness will be hard-clipping (Not feature, just bug, I guess). The HLG image WILL LOSE THIS PART OF THE DATA. Apple Gain Map is not subject to this limitation.
-
-Apple add new CIImageRepresentationOption 'hdrGainMapAsRGB' to generate RGB gain map, but not avalible on macOS 15.5. Not recommand to usb -b parameter.
-
-FIXED: ~~It's better to limit PQ HDR range in +2 eV, to avoid losing hightlight details.~~
-
-FIXED: ~~HDR headroom was limited to +2 eV, might improve in future.~~
-
-FIXED: ~~Not support HDR preview in Google Photos.~~
+When using Gain Map HDR image as input, output image brightness might be incorrect. You can export image as PQ HDR then input generated PQ HDR image.
 

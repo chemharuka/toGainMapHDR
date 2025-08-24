@@ -75,7 +75,7 @@ Quality for 8 bit heic SDR export: (-s -q 0.6)
 | quality0.8                                                   | quality1.0                                                   |                                                              |
 | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
-SDR Ratio for 8 bit heic SDR export: (-s -r 0.6, then converted to jpg by preview.app)
+SDR mapping ratio for 8 bit heic SDR export: (-s -r 0.6, then converted to jpg by preview.app)
 
 | ratio0.0                                                     | ratio0.2                                                     | ratio0.4                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -85,7 +85,7 @@ SDR Ratio for 8 bit heic SDR export: (-s -r 0.6, then converted to jpg by previe
 | ratio1.0                                                     |                                                              |                                                              |
 | ![ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91) |                                                              |                                                              |
 
-SDR Ratio for 8 bit jpg HDR export: (-j -r 0.6). Edge.app on macOS not support RGB HDR, using Safari.app.
+SDR mapping ratio for 8 bit jpg HDR export: (-j -r 0.6). Edge.app on macOS not support RGB HDR, using Safari.app.
 
 | ratio0.0 | ratio0.2  | ratio0.5 |
 | -------- | --------- | -------- |
@@ -104,9 +104,13 @@ convert gain map abc.avif to gain map heic file and keep base image:
 
  `./toGainMapHDR ~/Downloads/abc.avif ~/Documents/ -b ./Downloads/abc.avif` 
 
-convert abc.tiff to Apple gain map HDR file:
+convert abc.tiff to Apple gain map HDR file (less compatibility, but can adjust SDR mapping ratio):
 
  `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g` 
+
+convert abc.tiff to Apple gain map HDR file (more compatibility, with fixed SDR mapping ratio):
+
+ `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g -r -1` 
 
 convert abc.tiff to HLG HDR file:
 

@@ -86,6 +86,7 @@ Ratio for 8 bit heic SDR export: (-s -r 0.6)
 | ![ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91) |                                                              |                                                              |
 
 
+
 #### Sample command：
 
  `./toGainMapHDR ~/Downloads/abc.png ~/Documents/ -q 0.95 -d 10 -c rec2020`
@@ -143,7 +144,7 @@ You may need to change the DIR of toGainMapHDR in heic_hdr.py before running. (i
 
 ## Sample
 
-Sample Apple Gain Map HDR files:
+Sample Apple Gain Map HDR files: (options: -g -r -1, ONLY this format supported by Edge Browser on macOS)
 
 Sample 1: (Wu-kung Mountains as UNSECO Geopark, Jiangxi, China)
 ![DJI_1_0616_D](https://github.com/user-attachments/assets/d4fd48bb-6561-496f-b1ab-083ee1ae8a95)

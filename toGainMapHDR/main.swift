@@ -11,7 +11,7 @@ import CoreImage.CIFilterBuiltins
 import CoreVideo
 
 let ctx = CIContext()
-let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: tone mapping ratio (between 0 and 1, default: 0.4).\n             ratio = 0: keep full highlight details\n             ratio = 1: hard clip all parts exceeding SDR range\n             ratio = -1: only work with -g, generate Apple Gain Map by CIFilter\n         -b <base_photo>: specify base image and output ISO HDR with RGB gain map\n         -t <text>: Add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple HDR file (monochannel gain map)\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
+let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: tone mapping ratio (between 0 and 1, default: 0.2).\n             ratio = 0: keep full highlight details\n             ratio = 1: hard clip all parts exceeding SDR range\n             ratio = -1: only work with -g, generate Apple Gain Map by CIFilter\n         -b <base_photo>: specify base image and output ISO HDR with RGB gain map\n         -t <text>: Add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple HDR file (monochannel gain map)\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
 guard arguments.count > 2 else {
     print(help_info)
@@ -28,7 +28,7 @@ let imageoptions = arguments.dropFirst(3)
 var base_image_url : URL?
 
 var imagequality: Double? = 0.85
-var tonemappingratio: Float? = 0.4
+var tonemappingratio: Float? = 0.2
 var tonemappingratio_bool : Bool = false
 var base_image_bool : Bool = false
 var sdr_export: Bool = false

@@ -43,7 +43,7 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -q \<value>: image quality (default: 0.85)
 
--r \<value>: tone mapping ratio (between 0 and 1, default: 0.4)
+-r \<value>: tone mapping ratio (between 0 and 1, default: 0.2)
 
     ratio = 0: keep full highlight details
     ratio = 1: hard clip all parts exceeding SDR range

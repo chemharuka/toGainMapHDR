@@ -71,7 +71,7 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 #### Sample images for options
 
-Quality for 8 bit heic SDR export: (-s -q 0.6)
+Quality for 8 bit heic SDR export: (-s -q 0.2~1.0)
 
 | quality0.2                                                   | quality0.4                                                   | quality0.6                                                   |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -79,23 +79,22 @@ Quality for 8 bit heic SDR export: (-s -q 0.6)
 | quality0.8                                                   | quality1.0                                                   |                                                              |
 | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
-SDR mapping ratio for 8 bit heic SDR export: (-s -r 0.6, then converted to jpg by preview.app)
+SDR mapping ratio for jpg SDR export: (-s -j -r 0.0~1.0)
 
 | ratio0.0                                                     | ratio0.2                                                     | ratio0.4                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![ratio0.0](https://github.com/user-attachments/assets/f850b48d-724a-47e1-910b-1cb92de2f02a) | ![ratio0.2](https://github.com/user-attachments/assets/e2787b37-a6cb-434c-8ac5-91874c8e7571) | ![ratio0.4](https://github.com/user-attachments/assets/4ad4650d-f6e1-47ec-b525-77be34eca9b4) |
-| ratio0.6                                                     | ratio0.8                                                     | ratio0.9                                                     |
-| ![ratio0.6](https://github.com/user-attachments/assets/f187a82b-488c-4bd6-8f0c-1b06c2063d8a) | ![ratio0.8](https://github.com/user-attachments/assets/0fec25e4-e448-407c-b009-b844fac7f01a) | ![ratio0.9](https://github.com/user-attachments/assets/70c41f93-31bf-433f-abf0-1228aaeffa46) |
-| ratio1.0                                                     |                                                              |                                                              |
-| ![ratio1.0](https://github.com/user-attachments/assets/57560296-817e-4e06-8ec5-67a4d6e5fd91) |                                                              |                                                              |
+| ![test-r-0](https://github.com/user-attachments/assets/719e408f-f274-4346-8f16-5d2e6efc74fe) | ![test-r-0 2](https://github.com/user-attachments/assets/8505d64b-dd40-4dae-93a9-db38fd727e60) | ![test-r-0 4](https://github.com/user-attachments/assets/ec3e3e5d-df27-4c97-b98c-68c835f6b2d1) |
+| ratio0.6                                                     | ratio0.8                                                     | ratio1.0                                                     |
+| ![test-r-0 6](https://github.com/user-attachments/assets/d012d536-d604-492a-ae71-ae94ee8c20bb) | ![test-r-0 8](https://github.com/user-attachments/assets/3215db3a-99b3-461b-ade6-50256b1cb127) | ![test-r-1 0](https://github.com/user-attachments/assets/a0d4f857-3403-4874-88d4-cdf53ed6694f) |
 
-SDR mapping ratio for 8 bit jpg HDR export: (-j -r 0.6). Edge.app on macOS not support RGB HDR, using Safari.app.
 
-| ratio0.0 | ratio0.2  | ratio0.5 |
+HDR export: (-j -r 0.0~1.0). Edge.app on macOS not support RGB HDR, using Safari.app.
+
+| ratio0.0 | ratio0.2  | ratio0.4 |
 | -------- | --------- | -------- |
-| ![test-r=0 0](https://github.com/user-attachments/assets/865df214-f2fb-406b-831c-647d2ad6054e) | ![test-r=0 2](https://github.com/user-attachments/assets/877933c9-7618-4e70-a826-0c1c533e8521) | ![test-r=0 5](https://github.com/user-attachments/assets/b37c22cd-5e4b-4362-b835-7909fa217f2e) |
-| ratio0.8 | ratio0.95 |          |
-| ![test-r=0 8](https://github.com/user-attachments/assets/f5c9532b-59e2-4f96-9e9b-54c161a77ca7) | ![test-r=0 95](https://github.com/user-attachments/assets/660c8d42-a275-4958-b252-13b7c5aaf8fc) |          |
+| ![test-hdr-0 0](https://github.com/user-attachments/assets/7b53bb9f-bfe6-418c-9e29-c2285f4d7bc8) | ![test-hdr-0 2](https://github.com/user-attachments/assets/1c8c6fb1-bd78-4966-9ddc-0fd48911b38c) | ![test-hdr-0 4](https://github.com/user-attachments/assets/7245b902-7bcc-4ebf-b84a-e60dd1807253) |
+| ratio0.6 | ratio0.8 | ratio1.0|
+| ![test-hdr-0 6](https://github.com/user-attachments/assets/2fd00f49-ef87-4b05-8b4c-6083724c2394) | ![test-hdr-0 8](https://github.com/user-attachments/assets/64045808-6d75-410b-bc4e-1eb4bad9397e) | ![test-hdr-1 0](https://github.com/user-attachments/assets/a32fa542-9616-48ae-b625-cdbcb6a23c0d)|
 
 
 #### Sample command：

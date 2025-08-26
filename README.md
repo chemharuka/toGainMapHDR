@@ -86,17 +86,15 @@ SDR mapping ratio for jpg SDR export: (-s -j -r 0.0~1.0)
 | ![test-r-0](https://github.com/user-attachments/assets/719e408f-f274-4346-8f16-5d2e6efc74fe) | ![test-r-0 2](https://github.com/user-attachments/assets/8505d64b-dd40-4dae-93a9-db38fd727e60) | ![test-r-0 4](https://github.com/user-attachments/assets/ec3e3e5d-df27-4c97-b98c-68c835f6b2d1) |
 | ratio0.6                                                     | ratio0.8                                                     | ratio1.0                                                     |
 | ![test-r-0 6](https://github.com/user-attachments/assets/d012d536-d604-492a-ae71-ae94ee8c20bb) | ![test-r-0 8](https://github.com/user-attachments/assets/3215db3a-99b3-461b-ade6-50256b1cb127) | ![test-r-1 0](https://github.com/user-attachments/assets/a0d4f857-3403-4874-88d4-cdf53ed6694f) |
-| HDR image                                                    |                                                              |                                                              |
-| ![test-hdr](https://github.com/user-attachments/assets/edd06192-f934-495a-9b49-391bfe6c4a1e) |                                                              |                                                              |
 
-HDR export: (-j -r 0.6). Edge.app on macOS not support RGB HDR, using Safari.app.
+
+HDR export: (-j -r 0.0~1.0). Edge.app on macOS not support RGB HDR, using Safari.app.
 
 | ratio0.0 | ratio0.2  | ratio0.4 |
 | -------- | --------- | -------- |
 | ![test-hdr-0 0](https://github.com/user-attachments/assets/7b53bb9f-bfe6-418c-9e29-c2285f4d7bc8) | ![test-hdr-0 2](https://github.com/user-attachments/assets/1c8c6fb1-bd78-4966-9ddc-0fd48911b38c) | ![test-hdr-0 4](https://github.com/user-attachments/assets/7245b902-7bcc-4ebf-b84a-e60dd1807253) |
 | ratio0.6 | ratio0.8 | ratio1.0|
 | ![test-hdr-0 6](https://github.com/user-attachments/assets/2fd00f49-ef87-4b05-8b4c-6083724c2394) | ![test-hdr-0 8](https://github.com/user-attachments/assets/64045808-6d75-410b-bc4e-1eb4bad9397e) | ![test-hdr-1 0](https://github.com/user-attachments/assets/a32fa542-9616-48ae-b625-cdbcb6a23c0d)|
-
 
 
 #### Sample command：

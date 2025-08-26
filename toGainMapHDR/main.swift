@@ -11,7 +11,7 @@ import CoreImage.CIFilterBuiltins
 import CoreVideo
 
 let ctx = CIContext()
-let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: tone mapping ratio (default: 0.4).\n             ratio = 0: keep full highlight details\n             ratio = 1: hard clip all parts exceeding SDR range\n             ratio = -1: Only work with -g, generate Apple Gain Map by CIFilter\n         -b <base_photo>: specify base image and output ISO HDR with RGB gain map\n         -t <text>: Add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple HDR file (monochannel gain map)\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
+let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: tone mapping ratio (between 0 and 1, default: 0.4).\n             ratio = 0: keep full highlight details\n             ratio = 1: hard clip all parts exceeding SDR range\n             ratio = -1: only work with -g, generate Apple Gain Map by CIFilter\n         -b <base_photo>: specify base image and output ISO HDR with RGB gain map\n         -t <text>: Add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple HDR file (monochannel gain map)\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
 guard arguments.count > 2 else {
     print(help_info)
@@ -234,63 +234,7 @@ while pq_export {
 }
 
 
-// CIFilter and custom filter
-
-func areaMinMax(inputImage: CIImage) -> CIImage {
-    let filter = CIFilter.areaMinMax()
-    filter.inputImage = inputImage
-    filter.extent = inputImage.extent
-    return filter.outputImage!
-}
-
-func areaMaximum(inputImage: CIImage) -> CIImage {
-    let filter = CIFilter.areaMaximum()
-    filter.inputImage = inputImage
-    filter.extent = CGRect(
-        x: 1,
-        y: 0,
-        width: 1,
-        height: 1)
-     return filter.outputImage!
-}
-
-func ciImageToPixelBuffer(ciImage: CIImage) -> CVPixelBuffer? {
-    let attributes: [String: Any] = [
-        kCVPixelBufferCGImageCompatibilityKey as String: true,
-        kCVPixelBufferCGBitmapContextCompatibilityKey as String: true
-    ]
-    var pixelBuffer: CVPixelBuffer?
-    let status = CVPixelBufferCreate(
-        kCFAllocatorDefault,
-        1,
-        1,
-        kCVPixelFormatType_64RGBALE,
-        attributes as CFDictionary,
-        &pixelBuffer
-    )
-    guard status == kCVReturnSuccess, let buffer = pixelBuffer else {
-        return nil
-    }
-    ctx.render(ciImage, to: buffer)
-    return buffer
-}
-
-func extractPixelData(from pixelBuffer: CVPixelBuffer) -> (r: UInt16, g: UInt16, b: UInt16)? {
-    CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-    defer {
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
-    }
-    
-    guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else {
-        return nil
-    }
-    
-    let pixelData = baseAddress.assumingMemoryBound(to: UInt16.self)
-    let r = pixelData[0]
-    let g = pixelData[1]
-    let b = pixelData[2]
-    return (r, g, b)
-}
+// Custom filter
 
 private func getGainMap(hdr_input: CIImage,sdr_input: CIImage,hdr_max: Float) -> CIImage {
     let filter = GainMapFilter()
@@ -301,40 +245,43 @@ private func getGainMap(hdr_input: CIImage,sdr_input: CIImage,hdr_max: Float) ->
     return outputImage!
 }
 
-private func getHDRmax(hdr_input: CIImage) -> CIImage {
-    let filter = HDRmaxFilter()
-    filter.HDRImage = hdr_input
-    let outputImage = filter.outputImage
-    return outputImage!
+
+func maxLuminanceHDR(from ciImage: CIImage, context: CIContext) -> Float? {
+    let extent = ciImage.extent
+    
+    let filter = CIFilter.areaMaximum()
+    filter.inputImage = ciImage
+    filter.extent = extent
+    
+    guard let outputImage = filter.outputImage else { return nil }
+    
+    // Use floating point format to preserve HDR values
+    var bitmap = [Float](repeating: 0, count: 4)
+    context.render(outputImage,
+                   toBitmap: &bitmap,
+                   rowBytes: MemoryLayout<Float>.size * 4,
+                   bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+                   format: .RGBAf,
+                   colorSpace: nil)
+    
+    let r = bitmap[0]
+    let g = bitmap[1]
+    let b = bitmap[2]
+    
+    // Calculate luminance using linear RGB (Rec.709 coefficients)
+    let luminance: Float = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    
+    return luminance
 }
 
-func uint16ToFloat(value: UInt16) -> Float {
-    return Float(value) / Float(UInt16.max)
-}
-
-
-// calculate HDR headroom
-
-let hdr_max = getHDRmax(hdr_input: hdr_image!).applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":1.0,"inputTargetHeadroom":1.0])
-let hdr_min_max = areaMinMax(inputImage:hdr_max)
-let hdr_max_pixel = areaMaximum(inputImage:hdr_min_max)
-let hdr_max_pixel_data = extractPixelData(from: ciImageToPixelBuffer(ciImage: hdr_max_pixel)!)
-let hdr_max_pixel_data_max = max(hdr_max_pixel_data!.r, hdr_max_pixel_data!.g, hdr_max_pixel_data!.b)
-let hdr_max_value = uint16ToFloat(value:hdr_max_pixel_data_max)
-
-let hdr_headroom = pow(2.0, -16.7702 + 20.209*hdr_max_value) + 4.88701*hdr_max_value + 0.2935 //empirical
-
-let pic_headroom = min(max(2.0, hdr_headroom),16.0)
-
-//print("hdr_max_value=\(hdr_max_value)")
-//print("pic_headroom=\(pic_headroom)")
-
-let headroom_ratio = 1.0 + pic_headroom - pow(pic_headroom,pow(tonemappingratio!,0.2))
+var pic_headroom : Float
+pic_headroom = maxLuminanceHDR(from: hdr_image!, context: ctx)!
+let headroom_ratio = 1.0 + pic_headroom - pow(pic_headroom,tonemappingratio!)
+if pic_headroom < 2 {pic_headroom = 2}
 
 var tonemapped_sdrimage : CIImage?
-
 if tonemappingratio == -1 {
-    tonemapped_sdrimage = hdr_image?.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":pic_headroom,"inputTargetHeadroom":1.0])
+    tonemapped_sdrimage = hdr_image?.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":pic_headroom as Any,"inputTargetHeadroom":1.0])
 } else {
     if base_image_bool{
         if CIImage(contentsOf: base_image_url!) == nil {
@@ -349,8 +296,6 @@ if tonemappingratio == -1 {
         tonemapped_sdrimage = hdr_image?.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":headroom_ratio,"inputTargetHeadroom":1.0])
     }
 }
-
-
 
 
 while sdr_export{
@@ -452,6 +397,8 @@ if tonemappingratio == -1 {
 
 // -g: export monochrome Apple HDR gain map photo.
 
+
+
 let tmp_export_options = NSDictionary(dictionary:[ CIImageRepresentationOption.hdrImage:hdr_image!,CIImageRepresentationOption.hdrGainMapAsRGB:false])
 let tmp_heic_data = ctx.heifRepresentation(of: tonemapped_sdrimage!,
                                            format: CIFormat.RGBA8,
@@ -463,12 +410,16 @@ let tmp_gainmap_data = CIImage(data: tmp_heic_data!, options: [.init(rawValue: "
 let apple_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrGainMapImage:tmp_gainmap_data as Any])
 
 var imageproperties = hdr_image!.properties
+
 var makerapple = imageproperties[kCGImagePropertyMakerAppleDictionary as String] as? [String: Any] ?? [:]
-makerapple["33"] = 1.0
-makerapple["48"] = 0.01
+
+makerapple["33"] = 1.01
+makerapple["48"] = 0.009986
 imageproperties[kCGImagePropertyMakerAppleDictionary as String] = makerapple
 
 let modifiedimage = tonemapped_sdrimage!.settingProperties(imageproperties)
+
+
 
 if jpg_export {
     try! ctx.writeJPEGRepresentation(of: modifiedimage,

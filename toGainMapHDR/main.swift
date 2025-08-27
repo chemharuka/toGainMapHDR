@@ -38,7 +38,7 @@ var jpg_export: Bool = false
 var bit_depth = CIFormat.RGBA8
 var eight_bit: Bool = false
 var half_size: Bool = false
-var scaling_ratio : CGFloat? = 1.0
+var scaling_ratio : Float? = 1.0
 var gain_map_type1: Bool = false
 var gain_map_type2: Bool = false
 
@@ -135,7 +135,7 @@ while index < imageoptions.count {
             exit(1)
         }
         if let value = Float(arguments[index + 4]) {
-            scaling_ratio = CGFloat(value)
+            scaling_ratio = value
             index += 1 // Skip the next value
         } else {
             print("Error: The -H option requires a valid numeric value.")
@@ -274,9 +274,11 @@ private func getGainMap(hdr_input: CIImage,sdr_input: CIImage,hdr_max: Float) ->
 }
 
 func resizeCIImageByHalf(originalImage: CIImage) -> CIImage {
-    let scaleTransform = CGAffineTransform(scaleX: 1.0/scaling_ratio!, y: 1.0/scaling_ratio!)
-    let resizedImage = originalImage.transformed(by: scaleTransform)
-    return resizedImage
+    let lanczosScaleFilter = CIFilter.lanczosScaleTransform()
+    lanczosScaleFilter.inputImage = originalImage
+    lanczosScaleFilter.scale =  1.0/scaling_ratio!
+    lanczosScaleFilter.aspectRatio = 1
+    return lanczosScaleFilter.outputImage!
 }
 
 

@@ -118,13 +118,13 @@ convert gain map abc.avif to gain map heic file and keep base image:
 
  `./toGainMapHDR ~/Downloads/abc.avif ~/Documents/ -b ./Downloads/abc.avif` 
 
-convert abc.tiff to Apple gain map HDR file (less compatibility, but can adjust SDR mapping ratio):
+convert abc.tiff to Apple HDR by CIFilter:
 
  `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g` 
 
-convert abc.tiff to Apple gain map HDR file (more compatibility, with fixed SDR mapping ratio):
+convert abc.tiff to Apple HDR from ISO gain map (less compatibility):
 
- `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g -r -1` 
+ `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -a` 
 
 convert abc.tiff to HLG HDR file:
 

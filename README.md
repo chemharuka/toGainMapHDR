@@ -91,7 +91,7 @@ SDR mapping ratio for jpg SDR export: (-s -j -r 0.0~1.0)
 | ![test-r0 6](https://github.com/user-attachments/assets/2ea09c40-5a1a-4cd2-b079-5447663cc629) | ![test-r0 8](https://github.com/user-attachments/assets/2d8ebd20-7968-4e6f-b4e2-677fefcee83d) | ![test-r1 0](https://github.com/user-attachments/assets/818771a5-c3ab-4c6d-a264-d2eba37b93e0) |
 
 
-HDR export: (-j -r 0.0~1.0). Edge.app on macOS not support RGB HDR, using Safari.app.
+HDR export: (-j -r 0.0~1.0). Edge.app on macOS not support RGB HDR, view HDR effect on Safari.app.
 
 | ratio0.0 | ratio0.2  | ratio0.4 |
 | -------- | --------- | -------- |

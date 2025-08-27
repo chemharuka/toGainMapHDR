@@ -35,8 +35,8 @@ var sdr_export: Bool = false
 var pq_export: Bool = false
 var hlg_export: Bool = false
 var jpg_export: Bool = false
-var bit_depth = CIFormat.RGBA8
 var eight_bit: Bool = false
+var ten_bit: Bool = false
 var half_size: Bool = false
 var scaling_ratio : Float? = 1.0
 var gain_map_type1: Bool = false
@@ -155,7 +155,7 @@ while index < imageoptions.count {
             index += 1
             eight_bit = true
         } else { if bit_depth_argument == "10"{
-            bit_depth = CIFormat.RGB10
+            ten_bit = true
             index += 1
         } else {
             print("Error: Color depth must be either 8 or 10.")
@@ -232,7 +232,7 @@ if scaling_ratio! < 1 || scaling_ratio! > 2 {
 
 
 if hlg_export && eight_bit {print("Warrning: Suggested to use 10-bit with HLG.")}
-if jpg_export && bit_depth == CIFormat.RGB10 {print("Warning: Color depth will be 8 when exporting JPEG.")}
+if jpg_export && ten_bit {print("Warning: Color depth will be 8 when exporting JPEG.")}
 if pq_export && eight_bit {print("Warning: Color depth will be 10 when exporting PQ HDR.")}
 if tonemappingratio_bool && base_image_bool {print("Warrning: Base image specified, tone mapping ratio will not be applied.")}
 if tonemappingratio_bool && hlg_export {print("Warrning: Tone mapping ratio will not be applied when exporting HLG HDR image.")}
@@ -243,12 +243,18 @@ if half_size && !gain_map_type1 && !gain_map_type2 {print("Warrning: Only Apple 
 // export hlg and pq hdr file
 while hlg_export{
     let hlg_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85])
-    if !eight_bit {bit_depth = CIFormat.RGB10}
-    try! ctx.writeHEIFRepresentation(of: hdr_image!,
-                                     to: url_export_heic,
-                                     format: bit_depth,
-                                     colorSpace: CGColorSpace(name: hlg_color_space)!,
-                                     options:hlg_export_options as! [CIImageRepresentationOption : Any])
+    if eight_bit {
+        try! ctx.writeHEIFRepresentation(of: hdr_image!,
+                                         to: url_export_heic,
+                                         format: CIFormat.RGBA8,
+                                         colorSpace: CGColorSpace(name: hlg_color_space)!,
+                                         options:hlg_export_options as! [CIImageRepresentationOption : Any])
+    } else {
+        try! ctx.writeHEIF10Representation(of: hdr_image!,
+                                         to: url_export_heic,
+                                         colorSpace: CGColorSpace(name: hlg_color_space)!,
+                                         options:hlg_export_options as! [CIImageRepresentationOption : Any])
+    }
     exit(0)
 }
 
@@ -352,11 +358,18 @@ while sdr_export{
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options:sdr_export_options as! [CIImageRepresentationOption : Any])
     } else {
-        try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
-                                         to: url_export_heic,
-                                         format: bit_depth,
-                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options:sdr_export_options as! [CIImageRepresentationOption : Any])
+        if ten_bit{
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+                                               to: url_export_heic,
+                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                               options:sdr_export_options as! [CIImageRepresentationOption : Any])
+        } else {
+            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
+                                             to: url_export_heic,
+                                             format: CIFormat.RGBA8,
+                                             colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                             options:sdr_export_options as! [CIImageRepresentationOption : Any])
+        }
     }
     exit(0)
 }
@@ -371,11 +384,18 @@ if base_image_bool {
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options: rgb_export_options as! [CIImageRepresentationOption : Any])
     } else {
-        try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
-                                         to: url_export_heic,
-                                         format: bit_depth,
-                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options: rgb_export_options as! [CIImageRepresentationOption : Any])
+        if ten_bit {
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+                                               to: url_export_heic,
+                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                               options: rgb_export_options as! [CIImageRepresentationOption : Any])
+        } else {
+            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
+                                             to: url_export_heic,
+                                             format: CIFormat.RGBA8,
+                                             colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                             options: rgb_export_options as! [CIImageRepresentationOption : Any])
+        }
     }
     exit(0)
 }
@@ -389,11 +409,18 @@ if !gain_map_type1 && !gain_map_type2 {
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options: adaptive_export_options as! [CIImageRepresentationOption : Any])
     } else {
-        try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
-                                         to: url_export_heic,
-                                         format: bit_depth,
-                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options: adaptive_export_options as! [CIImageRepresentationOption : Any])
+        if ten_bit {
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+                                               to: url_export_heic,
+                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                               options: adaptive_export_options as! [CIImageRepresentationOption : Any])
+        } else {
+            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
+                                             to: url_export_heic,
+                                             format: CIFormat.RGBA8,
+                                             colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                             options: adaptive_export_options as! [CIImageRepresentationOption : Any])
+        }
     }
     exit(0)
 }
@@ -435,11 +462,18 @@ if gain_map_type1 {
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options:alt_export_options as! [CIImageRepresentationOption : Any])
     } else {
-        try! ctx.writeHEIFRepresentation(of: modifiedImage,
-                                         to: url_export_heic,
-                                         format: bit_depth,
-                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options: alt_export_options as! [CIImageRepresentationOption : Any])
+        if ten_bit {
+            try! ctx.writeHEIF10Representation(of: modifiedImage,
+                                               to: url_export_heic,
+                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                               options: alt_export_options as! [CIImageRepresentationOption : Any])
+        } else {
+            try! ctx.writeHEIFRepresentation(of: modifiedImage,
+                                             to: url_export_heic,
+                                             format: CIFormat.RGBA8,
+                                             colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                             options: alt_export_options as! [CIImageRepresentationOption : Any])
+        }
     }
     exit(00)
 }
@@ -475,11 +509,18 @@ if jpg_export {
                                      colorSpace: CGColorSpace(name: sdr_color_space)!,
                                      options:apple_export_options as! [CIImageRepresentationOption : Any])
 } else {
-    try! ctx.writeHEIFRepresentation(of: modifiedimage,
-                                     to: url_export_heic,
-                                     format: bit_depth,
-                                     colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                     options: apple_export_options as! [CIImageRepresentationOption : Any])
+    if ten_bit {
+        try! ctx.writeHEIF10Representation(of: modifiedimage,
+                                           to: url_export_heic,
+                                           colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                           options: apple_export_options as! [CIImageRepresentationOption : Any])
+    } else {
+        try! ctx.writeHEIFRepresentation(of: modifiedimage,
+                                         to: url_export_heic,
+                                         format: CIFormat.RGBA8,
+                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                         options: apple_export_options as! [CIImageRepresentationOption : Any])
+    }
 }
 
 //let filename2 = url_hdr.deletingPathExtension().appendingPathExtension("png").lastPathComponent

@@ -118,9 +118,9 @@ convert gain map abc.avif to gain map heic file and keep base image:
 
  `./toGainMapHDR ~/Downloads/abc.avif ~/Documents/ -b ./Downloads/abc.avif` 
 
-convert abc.tiff to Apple HDR by CIFilter:
+convert abc.tiff to Apple HDR by CIFilter and scale gain map to 0.67x:
 
- `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g` 
+ `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g -H 1.5` 
 
 convert abc.tiff to Apple HDR from ISO gain map (less compatibility):
 
@@ -139,8 +139,9 @@ convert RGB gain map (adaptive HDR) file to monochrome gain map (Apple HDR) heic
 1. Using a specific base photo will result larger file size (approximately double)
 2. Exporting 10-bit heic files will result larger file size (approximately double)
 3. Scaling the gain map can reduce file size, but will reduce highlight detail
-4. \*\* Monochrome gain map compatible with Google Photos (Android version), Instagram, Edge Browser etc. Recommended to use for sharing. The two different type have slight differences in compatibility. It is recommended to use the first one (-g).
-5. When exporting 8-bit heic photo, color discontinuity may occur in low-texture areas, like clouds, lakes.
+4. File size compare (in HEIC format): ISO Gain Map : Apple Gain Map : Apple Gain Map with scale 1.5 ≈ 1:0.85:0.55
+5. \*\* Monochrome gain map compatible with Google Photos (Android version), Instagram, Edge Browser etc. Recommended to use for sharing. The two different type have slight differences in compatibility. It is recommended to use the first one (-g).
+6. When exporting 8-bit heic photo, color discontinuity may occur in low-texture areas, like clouds, lakes.
 
 ### heic_hdr.py
 

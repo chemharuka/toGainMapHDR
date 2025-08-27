@@ -86,9 +86,9 @@ SDR mapping ratio for jpg SDR export: (-s -j -r 0.0~1.0)
 
 | ratio0.0                                                     | ratio0.2                                                     | ratio0.4                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![test-r-0](https://github.com/user-attachments/assets/719e408f-f274-4346-8f16-5d2e6efc74fe) | ![test-r-0 2](https://github.com/user-attachments/assets/8505d64b-dd40-4dae-93a9-db38fd727e60) | ![test-r-0 4](https://github.com/user-attachments/assets/ec3e3e5d-df27-4c97-b98c-68c835f6b2d1) |
+| ![test-r0 0](https://github.com/user-attachments/assets/1bd22c94-450e-41b3-95ba-1330d9165c63) | ![test-r0 2](https://github.com/user-attachments/assets/374c8192-0afc-4896-8c2a-0aee90bc0182) | ![test-r0 4](https://github.com/user-attachments/assets/edfd9788-3feb-43b7-b619-6d21c6c2995f) |
 | ratio0.6                                                     | ratio0.8                                                     | ratio1.0                                                     |
-| ![test-r-0 6](https://github.com/user-attachments/assets/d012d536-d604-492a-ae71-ae94ee8c20bb) | ![test-r-0 8](https://github.com/user-attachments/assets/3215db3a-99b3-461b-ade6-50256b1cb127) | ![test-r-1 0](https://github.com/user-attachments/assets/a0d4f857-3403-4874-88d4-cdf53ed6694f) |
+| ![test-r0 6](https://github.com/user-attachments/assets/2ea09c40-5a1a-4cd2-b079-5447663cc629) | ![test-r0 8](https://github.com/user-attachments/assets/2d8ebd20-7968-4e6f-b4e2-677fefcee83d) | ![test-r1 0](https://github.com/user-attachments/assets/818771a5-c3ab-4c6d-a264-d2eba37b93e0) |
 
 
 HDR export: (-j -r 0.0~1.0). Edge.app on macOS not support RGB HDR, using Safari.app.

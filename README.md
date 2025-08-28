@@ -60,7 +60,10 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -a: output Apple gain map HDR, which generated from ISO gain map \*\*
 
--H \<value>: scaling Apple gain map, between 1.0 (full size, default) and 2.0 (half size)
+-H \<value>: scale ratio for Apple gain map, (between 1.0 and 2.0, default: 1.0)
+
+    ratio = 1.0: full size gain map
+    ratio = 2.0: half width/height gain map
 
 -s: export tone mapped SDR image without HDR gain map
 

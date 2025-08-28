@@ -6,8 +6,7 @@ Include:
 
 1. toGainMapHDR, which convert png, tiff etc. HDR file to Adaptive HDR (gain map heic file) / ISO HDR (PQ or HLG curve image). The program will read a image as both SDR and HDR image, then calculate difference between two images as gain map.
 2. heic_hdr.py, a ChatGPT generated python script to convert all TIFF file to HEIC.
-3. HDRmaxKernel.ci.metallib, library needed to get headroom of HDR image.
-4. GainMapKernel.ci.metallib, library needed to output Apple gain map.
+3. GainMapKernel.ci.metallib, library needed to output Apple gain map.
 
 GUI program created by @vincenttsang [HDR-Gain-Map-Convert](https://github.com/vincenttsang/HDR-Gain-Map-Convert)
 

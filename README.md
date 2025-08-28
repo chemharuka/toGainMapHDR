@@ -84,9 +84,9 @@ Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 | -h (HLG 10 bit)                    | -       | 7.4 MB     |         | ≈44.82  |
 | -s (SDR image)                     | 7.5 MB  | **3.9 MB** | 27.94   | 27.83   |
 | -g (Apple HDR 1)                   | 12.4 MB | 8.6 MB     | 40.83   | 39.47*  |
-| -g -d 10 (Apple HDR 1 in 10 bit)   | -       | 13.2 MB    |         | 42.30*  |
 | -g -H 1.5 (Apple HDR 1 with scale) | 9.4 MB  | **5.5 MB** | 40.62   | 39.25*  |
 | -g -H 2.0 (Apple HDR 1 with scale) | 8.5 MB  | 4.7 MB     | 40.66   | 39.27*  |
+| -g -d 10 (Apple HDR 1 in 10 bit)   | -       | 13.2 MB    |         | 42.30*  |
 | -g -H 1.5 -d 10                    | -       | 10.1 MB    |         | 42.01*  |
 | -a (Apple HDR 2)                   | 12.6 MB | 9.1 MB     | 43.03   | 41.11   |
 | -a -H 1.5 (Apple HDR 2 with scale) | 9.6 MB  | **5.6 MB** | 42.84   | 40.88   |

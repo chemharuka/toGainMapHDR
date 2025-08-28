@@ -72,7 +72,7 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -help: print help information
 
-#### File Size
+#### File Size and Quality
 
 Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 
@@ -96,7 +96,7 @@ Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 | -d 10 (ISO Gain Map HDR in 10 bit) | -       | 14.8 MB    |         | 46.00   |
 | -q 100 (ISO Gain Map best quality) | 32.1 MB | 28.5 MB    | 48.75   | 48.49   |
 
-Note*: Apple gain map generated from CIFilter will cause slight brightness/gamma differences, resulting in a PSNR lower of about 5 dB, but this does not mean that details are lost.
+Note*: Apple gain map generated from CIFilter will cause slight brightness/gamma differences, which leads to lower PSNR. but this does not mean that details are lost.
 
 Compare with other HDR formats exported by LR.
 

@@ -313,6 +313,8 @@ func maxLuminanceHDR(from ciImage: CIImage, context: CIContext) -> Float? {
     let luminance: Float = 0.2126 * r + 0.7152 * g + 0.0722 * b
     return luminance
 }
+
+
 var pic_headroom : Float
 var headroom_ratio : Float
 var tonemapped_sdrimage : CIImage?
@@ -346,9 +348,7 @@ func generate_sdr_image() -> CIImage?{
     return hdr_image?.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":headroom_ratio,"inputTargetHeadroom":1.0])
 }
 
-let tonemapped_sdrimage_data = ctx.tiffRepresentation(of: generate_sdr_image()!, format: CIFormat.RGBA8, colorSpace: CGColorSpace(name: sdr_color_space)!)
-tonemapped_sdrimage = CIImage(data: tonemapped_sdrimage_data!,options: [CIImageOption.toneMapHDRtoSDR : true])
-                    
+tonemapped_sdrimage = generate_sdr_image()!
 
 while sdr_export{
     let sdr_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85])
@@ -428,10 +428,19 @@ if !gain_map_type1 && !gain_map_type2 {
 // -g: gain map type I, generate Apple HDR gain map by CIFilter
 if gain_map_type1 {
     var gain_map : CIImage
+    var tonemapped_sdrimage_data : Data
     gain_map = getGainMap(hdr_input: hdr_image!, sdr_input: tonemapped_sdrimage!, hdr_max: pic_headroom)
+    
     if half_size{
         gain_map = resizeCIImageByHalf(originalImage: gain_map)
     }
+    if ten_bit {
+        tonemapped_sdrimage_data = ctx.tiffRepresentation(of: generate_sdr_image()!, format: CIFormat.RGB10, colorSpace: CGColorSpace(name: sdr_color_space)!)!
+    } else {
+        tonemapped_sdrimage_data = ctx.tiffRepresentation(of: generate_sdr_image()!, format: CIFormat.RGBA8, colorSpace: CGColorSpace(name: sdr_color_space)!)!
+    }
+    
+    tonemapped_sdrimage = CIImage(data: tonemapped_sdrimage_data,options: [CIImageOption.toneMapHDRtoSDR : true])
 
     let stops = log2(pic_headroom)
     var imageProperties = hdr_image!.properties

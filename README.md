@@ -86,18 +86,18 @@ Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 | -h -d 8 (HLG 8 bit)                | -       | 3.3 MB     |         | ≈40.14  |
 | -h (HLG 10 bit)                    | -       | 7.4 MB     |         | ≈44.82  |
 | -s (SDR image)                     | 7.5 MB  | **3.9 MB** | 27.94   | 27.83   |
-| -g (Apple HDR 1)                   | 12.4 MB | 8.6 MB     | 40.83   | 39.47*  |
-| -g -H 1.5 (Apple HDR 1 with scale) | 9.4 MB  | **5.5 MB** | 40.62   | 39.25*  |
-| -g -H 2.0 (Apple HDR 1 with scale) | 8.5 MB  | 4.7 MB     | 40.66   | 39.27*  |
-| -g -d 10 (Apple HDR 1 in 10 bit)   | -       | 13.2 MB    |         | 42.30*  |
-| -g -H 1.5 -d 10                    | -       | 10.1 MB    |         | 42.01*  |
-| -a (Apple HDR 2)                   | 12.6 MB | 9.1 MB     | 43.03   | 41.11   |
-| -a -H 1.5 (Apple HDR 2 with scale) | 9.6 MB  | **5.6 MB** | 42.84   | 40.88   |
-| -a -H 2.0 (Apple HDR 2 with scale) | 8.6 MB  | 4.8 MB     | 42.86   | 40.88   |
-| -a -H 1.5 -d 10                    | -       | 10.2 MB    |         | 45.59   |
-| default (ISO Gain Map HDR)         | 12.7 MB | 10.2 MB    | 43.03   | 41.43   |
-| -d 10 (ISO Gain Map HDR in 10 bit) | -       | 14.8 MB    |         | 46.00   |
-| -q 100 (ISO Gain Map best quality) | 32.1 MB | 28.5 MB    | 48.75   | 48.49   |
+| -g (Apple HDR 1)                   | 11.1 MB | 6.5 MB     | 40.83   | 39.47*  |
+| -g -H 1.5 (Apple HDR 1 with scale) | 9.2 MB  | **5.2 MB** | 40.62   | 39.25*  |
+| -g -H 2.0 (Apple HDR 1 with scale) | 8.4 MB  | 4.6 MB     | 40.66   | 39.27*  |
+| -g -d 10 (Apple HDR 1 in 10 bit)   | -       | 11.0 MB    |         | 42.38*  |
+| -g -H 1.5 -d 10                    | -       | 9.7 MB     |         | 42.08*  |
+| -a (Apple HDR 2)                   | 11.4 MB | 7 MB       | 43.03   | 41.11   |
+| -a -H 1.5 (Apple HDR 2 with scale) | 9.4 MB  | **5.4 MB** | 42.84   | 40.88   |
+| -a -H 2.0 (Apple HDR 2 with scale) | 8.5 MB  | 4.7 MB     | 42.86   | 40.88   |
+| -a -H 1.5 -d 10                    | -       | 9.9 MB     |         | 45.66   |
+| default (ISO Gain Map HDR)         | 11.5 MB | 7.4 MB     | 43.03   | 41.43   |
+| -d 10 (ISO Gain Map HDR in 10 bit) | -       | 11.9 MB    |         | 46.08   |
+| -q 100 (ISO Gain Map best quality) | 27.5 MB | 26.4 MB    | 48.75   | 48.49   |
 
 Note*: Apple gain map generated from CIFilter will cause slight brightness/gamma differences, which leads to lower PSNR. but this does not mean that details are lost.
 

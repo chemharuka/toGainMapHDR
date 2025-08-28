@@ -76,34 +76,38 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 
-| options                            | JPG     | HEIC       |
-| ---------------------------------- | ------- | ---------- |
-| -p (PQ HDR 10 bit)                 | -       | **5.6 MB** |
-| -h -d 8 (HLG 8 bit)                | -       | 3.3 MB     |
-| -h (HLG 10 bit)                    | -       | 7.4 MB     |
-| -s (SDR image)                     | 7.5 MB  | **3.9 MB** |
-| -g (Apple HDR 1)                   | 12.4 MB | 8.6 MB     |
-| -g -d 10 (Apple HDR 1 in 10 bit)   | -       | 13.2 MB    |
-| -g -H 1.5 (Apple HDR 1 with scale) | 9.4 MB  | **5.5 MB** |
-| -g -H 2.0 (Apple HDR 1 with scale) | 8.5 MB  | 4.7 MB     |
-| -g -H 1.5 -d 10                    | -       | 10.1 MB    |
-| -a (Apple HDR 2)                   | 12.6 MB | 9.1 MB     |
-| -a -H 1.5 (Apple HDR 2 with scale) | 9.6 MB  | **5.6 MB** |
-| -a -H 2.0 (Apple HDR 2 with scale) | 8.6 MB  | 4.8 MB     |
-| -a -H 1.5 -d 10                    | -       | 10.2 MB    |
-| default (ISO Gain Map HDR)         | 12.7 MB | 10.2 MB    |
-| -d 10 (ISO Gain Map HDR in 10 bit) | -       | 14.8 MB    |
+| options                            | JPG     | HEIC       | PSNR/dB | PSNR/dB |
+| ---------------------------------- | ------- | ---------- | ------- | ------- |
+| -p (PQ HDR 10 bit)                 | -       | **5.6 MB** |         | 43.93   |
+| -p -q 100                          |         | 21.5 MB    |         | 50.42   |
+| -h -d 8 (HLG 8 bit)                | -       | 3.3 MB     |         | ≈40.14  |
+| -h (HLG 10 bit)                    | -       | 7.4 MB     |         | ≈44.82  |
+| -s (SDR image)                     | 7.5 MB  | **3.9 MB** | 27.94   | 27.83   |
+| -g (Apple HDR 1)                   | 12.4 MB | 8.6 MB     | 40.83   | 39.47   |
+| -g -d 10 (Apple HDR 1 in 10 bit)   | -       | 13.2 MB    |         | 42.30   |
+| -g -H 1.5 (Apple HDR 1 with scale) | 9.4 MB  | **5.5 MB** | 40.62   | 39.25   |
+| -g -H 2.0 (Apple HDR 1 with scale) | 8.5 MB  | 4.7 MB     | 40.66   | 39.27   |
+| -g -H 1.5 -d 10                    | -       | 10.1 MB    |         | 42.01   |
+| -a (Apple HDR 2)                   | 12.6 MB | 9.1 MB     | 43.03   | 41.11   |
+| -a -H 1.5 (Apple HDR 2 with scale) | 9.6 MB  | **5.6 MB** | 42.84   | 40.88   |
+| -a -H 2.0 (Apple HDR 2 with scale) | 8.6 MB  | 4.8 MB     | 42.86   | 40.88   |
+| -a -H 1.5 -d 10                    | -       | 10.2 MB    |         | 45.59   |
+| default (ISO Gain Map HDR)         | 12.7 MB | 10.2 MB    | 43.03   | 41.43   |
+| -d 10 (ISO Gain Map HDR in 10 bit) | -       | 14.8 MB    |         | 46.00   |
+| -q 100 (ISO Gain Map best quality) | 32.1 MB | 28.5 MB    | 48.75   | 48.49   |
 
 Compare with other HDR formats exported by LR.
 
-| Format                          | Size       |
-| ------------------------------- | ---------- |
-| UltraHDR (quality 60)           | 5.1 MB     |
-| UltraHDR (quality 85)           | 19.7 MB    |
-| AVIF (quality 70 with gain map) | 4.7 MB     |
-| AVIF (quality 85 with gain map) | 7.3 MB     |
-| AVIF (quality 85, PQ HDR)       | **1.9 MB** |
-| JXL (quality 85, PQ HDR)        | 4.9 MB     |
+| Format                          | Size       | PSNR/dB |
+| ------------------------------- | ---------- | ------- |
+| UltraHDR (quality 60)           | 5.1 MB     | 36.96   |
+| UltraHDR (quality 85)           | 19.7 MB    | 45.58   |
+| AVIF (quality 70 with gain map) | 4.7 MB     | 38.65   |
+| AVIF (quality 85 with gain map) | 7.3 MB     | 41.37   |
+| AVIF (quality 85, PQ HDR)       | 1.9 MB     | 37.76   |
+| AVIF (quality 95, PQ HDR)       | **2.7 MB** | 39.63   |
+| AVIF (quality 100, PQ HDR)      | 7.7 MB     | 46.31   |
+| JXL (quality 85, PQ HDR)        | 4.9 MB     | 41.30   |
 
 
 
@@ -111,10 +115,11 @@ Compare with other HDR formats exported by LR.
 
 Quality for 8 bit heic SDR export: (-s -q 0.2~1.0)
 
-| quality0.2                                                   | quality0.4                                                   | quality0.6                                                   |
+| -s -q                                                        |                                                              |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| quality0.2    34.22 dB                                       | quality0.4    37.78 dB                                       | quality0.6    41.34 dB                                       |
 | ![test-q=0 2](https://github.com/user-attachments/assets/f6916630-e607-4393-94ab-531b01217f2f) | ![test-q=0 4](https://github.com/user-attachments/assets/78735c04-91ee-42e8-8793-b4bb4a13f5cf) | ![test-q=0 6](https://github.com/user-attachments/assets/2ce8b0c5-5557-4eb2-a915-6355bdd45005) |
-| quality0.8                                                   | quality1.0                                                   |                                                              |
+| quality0.8    45.33 dB                                       | quality1.0    50.31 dB                                       |                                                              |
 | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
 SDR mapping ratio for jpg SDR export: (-s -j -r 0.0~1.0)

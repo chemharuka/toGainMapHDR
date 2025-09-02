@@ -22,17 +22,17 @@ Convert any HDR Files to Gain_Map_HDR.heic by toGainMapHDR:
 
 Supported input format: 
 
-* AVIF、JXL、HEIF (in PQ/HLG/Gain map)
+* AVIF、JXL、HEIF (in PQ/HLG/gain map)
 * TIFF (in PQ/HLG/Linear32)
 * PNG (in PQ/HLG)
 * JPG (gain map)
 * EXR、HDR
 
-(Note: Some formats have width/height limitation, only support the image file which could be openned by preview app)
+(Note: Some formats have width/height limitation, only support the image file which could be openned by preview.app)
 
 #### System Require
 
-Require macOS 15.0+ (Some format support require 26.0+).
+Require macOS 15.0+.
 
 PLEASE UPGRADE your system to LATEST version for more compatibility.
 
@@ -59,7 +59,7 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -a: output Apple gain map HDR, which generated from ISO gain map \*\*
 
--H \<value>: scale ratio for Apple gain map, (between 1.0 and 2.0, default: 1.0)
+-H \<value>: scaling ratio for Apple gain map, (between 1.0 and 2.0, default: 1.0)
 
     ratio = 1.0: full size gain map
     ratio = 2.0: half width/height gain map
@@ -70,7 +70,7 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -h: export HLG HDR heic image (default in 10-bit)
 
--j: export image in JPEG format
+-j: export image in JPEG format (work with SDR or gain map HDR exporting)
 
 -help: print help information
 
@@ -183,13 +183,13 @@ convert RGB gain map (adaptive HDR) file to monochrome gain map (Apple HDR) heic
 1. Using a specific base photo will result larger file size
 2. Scaling the gain map can reduce file size, with slightly lose highlight detail
 3. \*\* Monochrome gain map compatible with Google Photos (Android version), Instagram, Edge Browser etc. Recommended to use for sharing. The two different type have slight differences in compatibility. It is recommended to use the first one (-g).
-4. When exporting 8-bit heic photo, color discontinuity may occur in low-texture areas, like clouds, lakes.
+4. When exporting 8-bit heic image, color discontinuity may occur in low-texture areas, like clouds, lakes.
 
 ### heic_hdr.py
 
 Batch convert all tiff files in a folder by heic_hdr.py:
 
-1. Download all files in a folder:
+1. Clone \bin to a folder (or download them from release):
 
 `git clone https://github.com/chemharuka/toGainMapHDR.git`
 
@@ -197,11 +197,11 @@ Batch convert all tiff files in a folder by heic_hdr.py:
 
 `chmod 711 ./toGainMapHDR`
 
-2. run heic_hdr.py (default run with 8 threads, change it accroding to your chip's performance core.)
+2. run heic_hdr.py (default run with 8 threads, change it accroding to your chip's performance cores.)
 
 `python3 ./heic_hdr.py $folder_for_convert $options`
 
-You may need to change the DIR of toGainMapHDR in heic_hdr.py before running. (in line 44)
+You may need to change the **DIR** of toGainMapHDR in heic_hdr.py before running. (in line 44)
 
 #### Sample：
 

@@ -28,6 +28,13 @@ Supported input format:
 * JPG (gain map)
 * EXR、HDR
 
+Supported output format: 
+
+* ISO Gain Map HDR in HEIC/JPG (default)
+* Apple Gain Map HDR in HEIC/JPG
+* PQ/HLG HDR in HEIC
+* Tone mapped SDR in HEIC/JPG
+
 (Note: Some formats have width/height limitation, only support the image file which could be openned by preview.app)
 
 #### System Require

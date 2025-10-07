@@ -313,20 +313,6 @@ func maxLuminanceHDR(from ciImage: CIImage, context: CIContext) -> Float? {
     return luminance
 }
 
-func currentArchitecture() -> String {
-    var sysinfo = utsname()
-    uname(&sysinfo)
-    return withUnsafePointer(to: &sysinfo.machine) {
-        $0.withMemoryRebound(to: CChar.self, capacity: 1) {
-            String(validatingUTF8: $0) ?? "unknown"
-        }
-    }
-}
-let arch = currentArchitecture()
-guard arch == "arm64" || arch == "x86_64" else {
-    print("Unsupported architecture: \(arch)")
-    exit(1)
-}
 
 var pic_headroom : Float
 var headroom_ratio : Float
@@ -372,19 +358,10 @@ while sdr_export{
                                          options:sdr_export_options as! [CIImageRepresentationOption : Any])
     } else {
         if ten_bit{
-            if arch == "arm64" {
-                try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
-                                                   to: url_export_heic,
-                                                   colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                                   options:sdr_export_options as! [CIImageRepresentationOption : Any])
-            }
-            if arch == "x86_64" {
-                try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
-                                                 to: url_export_heic,
-                                                 format: CIFormat.RGB10,
-                                                 colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                                 options:sdr_export_options as! [CIImageRepresentationOption : Any])
-            }
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+                                               to: url_export_heic,
+                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                               options:sdr_export_options as! [CIImageRepresentationOption : Any])
         } else {
             try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
                                              to: url_export_heic,
@@ -407,19 +384,10 @@ if base_image_bool {
                                          options: rgb_export_options as! [CIImageRepresentationOption : Any])
     } else {
         if ten_bit {
-            if arch == "arm64" {
-                try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
-                                                   to: url_export_heic,
-                                                   colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                                   options:rgb_export_options as! [CIImageRepresentationOption : Any])
-            }
-            if arch == "x86_64" {
-                try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
-                                                 to: url_export_heic,
-                                                 format: CIFormat.RGB10,
-                                                 colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                                 options:rgb_export_options as! [CIImageRepresentationOption : Any])
-            }
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+                                               to: url_export_heic,
+                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                               options: rgb_export_options as! [CIImageRepresentationOption : Any])
         } else {
             try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
                                              to: url_export_heic,
@@ -441,19 +409,10 @@ if !gain_map_type1 && !gain_map_type2 {
                                          options: adaptive_export_options as! [CIImageRepresentationOption : Any])
     } else {
         if ten_bit {
-            if arch == "arm64" {
-                try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
-                                                   to: url_export_heic,
-                                                   colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                                   options:adaptive_export_options as! [CIImageRepresentationOption : Any])
-            }
-            if arch == "x86_64" {
-                try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
-                                                 to: url_export_heic,
-                                                 format: CIFormat.RGB10,
-                                                 colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                                 options:adaptive_export_options as! [CIImageRepresentationOption : Any])
-            }
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+                                               to: url_export_heic,
+                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                               options: adaptive_export_options as! [CIImageRepresentationOption : Any])
         } else {
             try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
                                              to: url_export_heic,
@@ -512,20 +471,10 @@ if gain_map_type1 {
                                          options:alt_export_options as! [CIImageRepresentationOption : Any])
     } else {
         if ten_bit {
-            if arch == "arm64" {
-                try! ctx.writeHEIF10Representation(of: modifiedImage,
-                                                   to: url_export_heic,
-                                                   colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                                   options:alt_export_options as! [CIImageRepresentationOption : Any])
-                exit(100)
-            }
-            if arch == "x86_64" {
-                try! ctx.writeHEIFRepresentation(of: modifiedImage,
-                                                 to: url_export_heic,
-                                                 format: CIFormat.RGB10,
-                                                 colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                                 options:alt_export_options as! [CIImageRepresentationOption : Any])
-            }
+            try! ctx.writeHEIF10Representation(of: modifiedImage,
+                                               to: url_export_heic,
+                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                               options: alt_export_options as! [CIImageRepresentationOption : Any])
         } else {
             try! ctx.writeHEIFRepresentation(of: modifiedImage,
                                              to: url_export_heic,
@@ -534,7 +483,7 @@ if gain_map_type1 {
                                              options: alt_export_options as! [CIImageRepresentationOption : Any])
         }
     }
-    exit(0)
+    exit(00)
 }
 
 // gain map type II: generate Apple HDR gain map from ISO gain map
@@ -569,19 +518,10 @@ if jpg_export {
                                      options:apple_export_options as! [CIImageRepresentationOption : Any])
 } else {
     if ten_bit {
-        if arch == "arm64" {
-            try! ctx.writeHEIF10Representation(of: modifiedimage,
-                                               to: url_export_heic,
-                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                               options:apple_export_options as! [CIImageRepresentationOption : Any])
-        }
-        if arch == "x86_64" {
-            try! ctx.writeHEIFRepresentation(of: modifiedimage,
-                                             to: url_export_heic,
-                                             format: CIFormat.RGB10,
-                                             colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                             options:apple_export_options as! [CIImageRepresentationOption : Any])
-        }
+        try! ctx.writeHEIF10Representation(of: modifiedimage,
+                                           to: url_export_heic,
+                                           colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                           options: apple_export_options as! [CIImageRepresentationOption : Any])
     } else {
         try! ctx.writeHEIFRepresentation(of: modifiedimage,
                                          to: url_export_heic,

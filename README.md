@@ -39,9 +39,9 @@ Supported output format:
 
 #### System Require
 
-Require macOS 15.0+.
+Require macOS 15.0+. Fully tested on Apple Silicon.
 
-Fully tested on Apple Silicon. Not fully tested on Intel Macs, please report any issues.
+There are some issues with Intel Mac, not all features available. 
 
 PLEASE UPGRADE your system to LATEST version for more compatibility.
 
@@ -235,6 +235,8 @@ Sample 3: (Kanbula National Park, Qinghai, China)
 
 ## Known Issue
 
-HDR decoding path mis-handle when large AVIF image (long edge ≥ 8192) as input on Intel Mac. This is a problem with the system's built-in function and may be fixed in a future system version.
- You can export image as PQ HDR then input generated PQ HDR image.
+HDR decoding path mis-handle when large AVIF image (long edge ≥ 8192) as input on Intel Mac.
 
+10-bit Gain Map HDR exporting issue on Intel Mac.
+
+Brightness incorrect when exporting Apple Gain Map HDR with high headroom (>10)

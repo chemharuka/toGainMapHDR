@@ -41,6 +41,8 @@ Supported output format:
 
 Require macOS 15.0+.
 
+Fully tested on Apple Silicon. Not fully tested on Intel Macs, please report any issues.
+
 PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 PLEASE UPGRADE your system to LATEST version for more compatibility.

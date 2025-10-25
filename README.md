@@ -233,5 +233,3 @@ Sample 3: (Kanbula National Park, Qinghai, China)
 HDR decoding path mis-handle when large AVIF image (long edge ≥ 8192) as input on Intel Mac.
 
 10-bit Gain Map HDR exporting issue on Intel Mac.
-
-Brightness incorrect when exporting Apple Gain Map HDR with high headroom (>10)

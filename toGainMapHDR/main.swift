@@ -338,8 +338,6 @@ if pic_headroom2 < 1.0 {
 }
 
 headroom_ratio = pic_headroom2
-print("\(pic_headroom)")
-print("\(pic_headroom2)")
 
 
 func generate_sdr_image() -> CIImage?{

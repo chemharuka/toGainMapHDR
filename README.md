@@ -45,16 +45,14 @@ There are some issues with Intel Mac, not all features available.
 
 PLEASE UPGRADE your system to LATEST version for more compatibility.
 
-PLEASE UPGRADE your system to LATEST version for more compatibility.
-
 #### Options:
 
 -q \<value>: image quality (default: 0.85)
 
--r \<value>: tone mapping ratio (between 0 and 1, default: 0.2)
+-r \<value>: SDR tone mapping ratio (≥1.0, default: 3.0)
 
-    ratio = 0: keep full highlight details
-    ratio = 1: hard clip all parts exceeding SDR range
+    ratio = 1.0: keep full highlight details
+    ratio >> 10: lose all highlight details
 
 -b \<file_path>: specify the base image and output in RGB gain map format.
 
@@ -106,8 +104,6 @@ Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 | default (ISO Gain Map HDR)         | 11.5 MB | 7.4 MB     | 43.03   | 41.43   |
 | -d 10 (ISO Gain Map HDR in 10 bit) | -       | 11.9 MB    |         | 46.08   |
 | -q 100 (ISO Gain Map best quality) | 27.5 MB | 26.4 MB    | 48.75   | 48.49   |
-
-Note*: Apple gain map generated from CIFilter will cause slight brightness/gamma differences, which leads to lower PSNR. but this does not mean that details are lost.
 
 Compare with other HDR formats exported by LR.
 

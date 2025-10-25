@@ -131,22 +131,21 @@ Quality for 8 bit heic SDR export: (-s -q 0.2~1.0)
 | quality0.8    45.33 dB                                       | quality1.0    50.31 dB                                       |                                                              |
 | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
-SDR mapping ratio for jpg SDR export: (-s -j -r 0.0~1.0)
+SDR mapping ratio for jpg SDR export: (-s -j -r 1.0~50.0)
 
-| ratio0.0                                                     | ratio0.2                                                     | ratio0.4                                                     |
+| ratio1.0                                                     | ratio2.0                                                     | ratio3.0                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![test-r0 0](https://github.com/user-attachments/assets/1bd22c94-450e-41b3-95ba-1330d9165c63) | ![test-r0 2](https://github.com/user-attachments/assets/374c8192-0afc-4896-8c2a-0aee90bc0182) | ![test-r0 4](https://github.com/user-attachments/assets/edfd9788-3feb-43b7-b619-6d21c6c2995f) |
-| ratio0.6                                                     | ratio0.8                                                     | ratio1.0                                                     |
-| ![test-r0 6](https://github.com/user-attachments/assets/2ea09c40-5a1a-4cd2-b079-5447663cc629) | ![test-r0 8](https://github.com/user-attachments/assets/2d8ebd20-7968-4e6f-b4e2-677fefcee83d) | ![test-r1 0](https://github.com/user-attachments/assets/818771a5-c3ab-4c6d-a264-d2eba37b93e0) |
+| ![DJI_air3_2250_D1 0](https://github.com/user-attachments/assets/1a305539-49b0-4c53-8b31-28e907c4f21c) | ![DJI_air3_2250_D2 0](https://github.com/user-attachments/assets/0ba575b9-8a80-442b-bff3-bcf744d86955) | ![DJI_air3_2250_D3 0](https://github.com/user-attachments/assets/96a90f9b-c4ae-420c-bca9-5107ff4aa253) |
+| ratio6.0                                                     | ratio20.0                                                     | ratio50.0                                                     |
+| ![DJI_air3_2250_D6 0](https://github.com/user-attachments/assets/b9feda17-9e05-4787-aa1d-f0fb68ab5966) | ![DJI_air3_2250_D20 0](https://github.com/user-attachments/assets/93ab6610-1a69-4074-be8f-f9651552dbd3) | ![DJI_air3_2250_D50 0](https://github.com/user-attachments/assets/967d2a61-6d74-446e-8dbe-655e3614bd60) |
 
+HDR export: (-j -r 1.0~50.0). Edge.app on macOS not support RGB HDR, view HDR effect on Safari.app.
 
-HDR export: (-j -r 0.0~1.0). Edge.app on macOS not support RGB HDR, view HDR effect on Safari.app.
-
-| ratio0.0 | ratio0.2  | ratio0.4 |
+| ratio1.0 | ratio2.0  | ratio3.0 |
 | -------- | --------- | -------- |
-| ![test-hdr-0 0](https://github.com/user-attachments/assets/7b53bb9f-bfe6-418c-9e29-c2285f4d7bc8) | ![test-hdr-0 2](https://github.com/user-attachments/assets/1c8c6fb1-bd78-4966-9ddc-0fd48911b38c) | ![test-hdr-0 4](https://github.com/user-attachments/assets/7245b902-7bcc-4ebf-b84a-e60dd1807253) |
-| ratio0.6 | ratio0.8 | ratio1.0|
-| ![test-hdr-0 6](https://github.com/user-attachments/assets/2fd00f49-ef87-4b05-8b4c-6083724c2394) | ![test-hdr-0 8](https://github.com/user-attachments/assets/64045808-6d75-410b-bc4e-1eb4bad9397e) | ![test-hdr-1 0](https://github.com/user-attachments/assets/a32fa542-9616-48ae-b625-cdbcb6a23c0d)|
+| ![_12742701 0](https://github.com/user-attachments/assets/42e406d3-2d23-45ec-baa5-22837e2ee846) | ![_12742702 0](https://github.com/user-attachments/assets/b6e6b2b5-7c7e-4718-8b9d-1eca6a038fb5) | ![_12742703 0](https://github.com/user-attachments/assets/3a791f5d-da6a-4175-a1e6-bd4a5f865421) |
+| ratio6.0 | ratio20.0 | ratio50.0|
+| ![_12742706 0](https://github.com/user-attachments/assets/ac5e1680-8298-40ff-be06-913814e0495e) | ![_127427020 0](https://github.com/user-attachments/assets/d80979cf-ab1d-4813-adbb-7a3eff16ee58) | ![_127427050 0](https://github.com/user-attachments/assets/8c3df467-61c1-4f75-889c-412bccf565a4) |
 
 Apple Gain Map scaling ratio: (-j -g -H1.0~2.0).
 

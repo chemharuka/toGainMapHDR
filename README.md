@@ -25,7 +25,7 @@ Supported input format:
 * AVIF、JXL、HEIF (in PQ/HLG/gain map)
 * TIFF (in PQ/HLG/Linear32)
 * PNG (in PQ/HLG)
-* JPG (gain map)
+* ISO gain map HDR
 * EXR、HDR
 
 Supported output format: 
@@ -35,7 +35,11 @@ Supported output format:
 * PQ/HLG HDR in HEIC
 * Tone mapped SDR in HEIC/JPG
 
-(Note: Some formats have width/height limitation, only support the image file which could be openned by preview.app)
+Note: 
+
+Some formats have width/height limitation, only support the image file which could be openned by preview.app
+
+CIImage cannot handle the brightness of Apple gain map HDR correctly, not recommended to input in this format.
 
 #### System Require
 
@@ -88,18 +92,18 @@ Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 
 | options                            | JPG     | HEIC       | PSNR/dB | PSNR/dB |
 | ---------------------------------- | ------- | ---------- | ------- | ------- |
-| -p (PQ HDR 10 bit)                 | -       | **5.6 MB** |         | 43.93   |
+| -p (PQ HDR 10 bit)                 | -       | 5.6 MB     |         | 43.93   |
 | -p -q 100                          | -       | 21.5 MB    |         | 50.42   |
 | -h -d 8 (HLG 8 bit)                | -       | 3.3 MB     |         | ≈40.14  |
 | -h (HLG 10 bit)                    | -       | 7.4 MB     |         | ≈44.82  |
-| -s (SDR image)                     | 7.5 MB  | **3.9 MB** | 27.94   | 27.83   |
-| -g (Apple HDR 1)                   | 11.1 MB | 6.5 MB     | 40.83   | 39.47*  |
-| -g -H 1.5 (Apple HDR 1 with scale) | 9.2 MB  | **5.2 MB** | 40.62   | 39.25*  |
-| -g -H 2.0 (Apple HDR 1 with scale) | 8.4 MB  | 4.6 MB     | 40.66   | 39.27*  |
-| -g -d 10 (Apple HDR 1 in 10 bit)   | -       | 11.0 MB    |         | 42.38*  |
-| -g -H 1.5 -d 10                    | -       | 9.7 MB     |         | 42.08*  |
+| -s (SDR image)                     | 7.5 MB  | 3.9 MB     | 27.94   | 27.83   |
+| -g (Apple HDR 1)                   | 11.1 MB | 6.5 MB     | 40.83   | ≈39.47  |
+| -g -H 1.5 (Apple HDR 1 with scale) | 9.2 MB  | 5.2 MB     | 40.62   | ≈39.25  |
+| -g -H 2.0 (Apple HDR 1 with scale) | 8.4 MB  | 4.6 MB     | 40.66   | ≈39.27  |
+| -g -d 10 (Apple HDR 1 in 10 bit)   | -       | 11.0 MB    |         | ≈42.38  |
+| -g -H 1.5 -d 10                    | -       | 9.7 MB     |         | ≈42.08  |
 | -a (Apple HDR 2)                   | 11.4 MB | 7 MB       | 43.03   | 41.11   |
-| -a -H 1.5 (Apple HDR 2 with scale) | 9.4 MB  | **5.4 MB** | 42.84   | 40.88   |
+| -a -H 1.5 (Apple HDR 2 with scale) | 9.4 MB  | 5.4 MB     | 42.84   | 40.88   |
 | -a -H 2.0 (Apple HDR 2 with scale) | 8.5 MB  | 4.7 MB     | 42.86   | 40.88   |
 | -a -H 1.5 -d 10                    | -       | 9.9 MB     |         | 45.66   |
 | default (ISO Gain Map HDR)         | 11.5 MB | 7.4 MB     | 43.03   | 41.43   |
@@ -115,7 +119,7 @@ Compare with other HDR formats exported by LR.
 | AVIF (quality 70 with gain map) | 4.7 MB     | 38.65   |
 | AVIF (quality 85 with gain map) | 7.3 MB     | 41.37   |
 | AVIF (quality 85, PQ HDR)       | 1.9 MB     | 37.76   |
-| AVIF (quality 95, PQ HDR)       | **2.7 MB** | 39.63   |
+| AVIF (quality 95, PQ HDR)       | 2.7 MB     | 39.63   |
 | AVIF (quality 100, PQ HDR)      | 7.7 MB     | 46.31   |
 | JXL (quality 85, PQ HDR)        | 4.9 MB     | 41.30   |
 

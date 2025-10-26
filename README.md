@@ -47,6 +47,8 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 #### Options:
 
+default: output HDR-heic with ISO gain map in RGB
+
 -q \<value>: image quality (default: 0.85)
 
 -r \<value>: SDR tone mapping ratio (≥1.0, default: 3.0)
@@ -54,9 +56,9 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
     ratio = 1.0: keep full highlight details
     ratio >> 10: lose all highlight details
 
--b \<file_path>: specify the base image and output in RGB gain map format.
+-b \<file_path>: specify the base image
 
--t \<text>: add extra text after the output file name.
+-t \<text>: add extra text after the output file name
 
 -c \<color space>: specify output color space (srgb, p3, rec2020)
 
@@ -66,10 +68,9 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 -a: output Apple gain map HDR, which generated from ISO gain map \*\*
 
--H \<value>: scaling ratio for Apple gain map, (between 1.0 and 2.0, default: 1.0)
+-H \<value>: scaling Apple gain map, between 1.0 (full size, default) and 2.0 (half size)
 
-    ratio = 1.0: full size gain map
-    ratio = 2.0: half width/height gain map
+-m: export ISO gain map HDR in monochrome
 
 -s: export tone mapped SDR image without HDR gain map
 

@@ -12,7 +12,7 @@ import ImageIO
 import UniformTypeIdentifiers
 
 let ctx = CIContext()
-let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0).\n             ratio = 1.0: keep full highlight details\n             ratio >> 10: lose all highlight details\n         -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H <value>: scaling Apple gain map, between 1.0 (full size, default) and 2.0 (half size)\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
+let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0).\n             ratio = 1.0: keep full highlight details\n             ratio >> 10: lose all highlight details\n         -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H <value>: Apple gain map subsample factor, between 1.0 (full size, default) and 2.0 (half size)\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
 guard arguments.count > 2 else {
     print(help_info)
@@ -42,7 +42,7 @@ var half_size: Bool = false
 var scaling_ratio : Float? = 1.0
 var apple_gain_map: Bool = false
 var hdr_image: CIImage
-var monochrome_gain_map: Bool = false
+var monochrome_export: Bool = false
 
 let read_hdr_image = CIImage(contentsOf: url_hdr, options: [.expandToHDR: true])
 if read_hdr_image == nil {
@@ -128,7 +128,7 @@ while index < imageoptions.count {
     case "-j":
         jpg_export = true
     case "-m":
-        monochrome_gain_map = true
+        monochrome_export = true
     case "-H":
         guard index + 1 < imageoptions.count else {
             print("Error: The -H option requires a valid numeric value.")
@@ -208,7 +208,7 @@ let path_export = URL(fileURLWithPath: arguments[2])
 let url_export_heic = path_export.appendingPathComponent(filename!)
 let url_export_jpg = path_export.appendingPathComponent(filename_jpg!)
 
-if [pq_export, hlg_export, sdr_export, apple_gain_map, base_image_bool, monochrome_gain_map].filter({$0}).count >= 2 {
+if [pq_export, hlg_export, sdr_export, apple_gain_map, base_image_bool, monochrome_export].filter({$0}).count >= 2 {
     print("Error: Only one export format can be used.")
     exit(1)
 }
@@ -236,7 +236,7 @@ if pq_export && eight_bit {print("Warning: Color depth will be 10 when exporting
 if tonemappingratio_bool && base_image_bool {print("Warrning: Base image specified, tone mapping ratio will not be applied.")}
 if tonemappingratio_bool && hlg_export {print("Warrning: Tone mapping ratio will not be applied when exporting HLG HDR image.")}
 if tonemappingratio_bool && pq_export {print("Warrning: Tone mapping ratio will not be applied when exporting PQ HDR image.")}
-if base_image_bool && monochrome_gain_map {print("Warrning: Base image specified, will use RGB gain map.")}
+if base_image_bool && monochrome_export {print("Warrning: Base image specified, will use RGB gain map.")}
 
 
 // export hlg and pq hdr file
@@ -402,15 +402,10 @@ if base_image_bool {
     exit(0)
 }
 
-// export adaptive gain map image
+// export adaptive gain map image (default format)
 if !apple_gain_map {
     var adaptive_export_options: NSDictionary
-    
-    if half_size {
-        hdr_image = lanczosResizeImage(originalImage: hdr_image, ratio: scaling_ratio!)
-    }
-    
-    if monochrome_gain_map {
+    if monochrome_export {
         adaptive_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image,CIImageRepresentationOption.hdrGainMapAsRGB:false])
     } else {
         adaptive_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image,CIImageRepresentationOption.hdrGainMapAsRGB:true])
@@ -436,7 +431,6 @@ if !apple_gain_map {
     }
     exit(0)
 }
-
 
 // -g: Apple HDR gain map by CIFilter
 if apple_gain_map {
@@ -501,3 +495,6 @@ exit(20)
 //let filename2 = url_hdr.deletingPathExtension().appendingPathExtension("png").lastPathComponent
 //let url_export_heic2 = path_export.appendingPathComponent(filename2)
 //try! ctx.writePNGRepresentation(of: gainmap!, to: url_export_heic2, format: CIFormat.RGBA8, colorSpace:CGColorSpace(name: CGColorSpace.displayP3)!)
+
+
+

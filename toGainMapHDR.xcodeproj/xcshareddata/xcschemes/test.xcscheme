@@ -53,7 +53,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/luyao/Desktop/export/test.tif /Users/luyao/Desktop/export/    -r 100"
+            argument = "/Users/luyao/Desktop/export/test.tif /Users/luyao/Desktop/export/    -H 2.0"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

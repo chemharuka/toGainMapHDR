@@ -14,22 +14,22 @@ extern "C" float4 GainMapFilter(coreimage::sample_t hdr, coreimage::sample_t sdr
 {
     float gamma_ratio;
     float ratio;
-    float hdr_m;
-    float sdr_m;
-    float m;
+    float hdr_lux;
+    float sdr_lux;
     
-    m = (hdr.r > hdr.g) ? hdr.r : hdr.g;
-    hdr_m = (m > hdr.b)? m : hdr.b;
+    hdr_lux = hdr.r * 0.2126 +  hdr.g * 0.7152 + hdr.b * 0.0722;
+    sdr_lux = sdr.r * 0.2126 +  sdr.g * 0.7152 + sdr.b * 0.0722;
     
-    m = (sdr.r > sdr.g) ? sdr.r : sdr.g;
-    sdr_m = (m > sdr.b)? m : sdr.b;
-    
-    if (sdr_m <= 0.0) {
+    if (sdr_lux <= 0.0) {
         ratio = 1.0;
     } else {
-        ratio = hdr_m/sdr_m;
+        ratio = hdr_lux/sdr_lux;
     }
     ratio = (ratio - 1.0)/(hdrmax - 1.0);
+    
+    if (ratio > 1.0) {
+        ratio = 1.0;
+    }
     
     if (ratio < 0.018) {
         gamma_ratio = 4.5 * ratio;

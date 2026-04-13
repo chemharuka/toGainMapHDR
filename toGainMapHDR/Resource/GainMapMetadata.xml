@@ -1,0 +1,36 @@
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 6.0.0">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:HDRToneMap="http://ns.apple.com/HDRToneMap/1.0/">
+         <HDRToneMap:Version>1</HDRToneMap:Version>
+         <HDRToneMap:BaseHeadroom>0.000000</HDRToneMap:BaseHeadroom>
+         <HDRToneMap:AlternateHeadroom>2.300450</HDRToneMap:AlternateHeadroom>
+         <HDRToneMap:ChannelMetadata>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <HDRToneMap:GainMapMin>0.000000</HDRToneMap:GainMapMin>
+                  <HDRToneMap:GainMapMax>2.000000</HDRToneMap:GainMapMax>
+                  <HDRToneMap:Gamma>1.000000</HDRToneMap:Gamma>
+                  <HDRToneMap:BaseOffset>0.000010</HDRToneMap:BaseOffset>
+                  <HDRToneMap:AlternateOffset>0.000010</HDRToneMap:AlternateOffset>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <HDRToneMap:GainMapMin>0.000000</HDRToneMap:GainMapMin>
+                  <HDRToneMap:GainMapMax>2.000000</HDRToneMap:GainMapMax>
+                  <HDRToneMap:Gamma>1.000000</HDRToneMap:Gamma>
+                  <HDRToneMap:BaseOffset>0.000010</HDRToneMap:BaseOffset>
+                  <HDRToneMap:AlternateOffset>0.000010</HDRToneMap:AlternateOffset>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <HDRToneMap:GainMapMin>0.000000</HDRToneMap:GainMapMin>
+                  <HDRToneMap:GainMapMax>2.000000</HDRToneMap:GainMapMax>
+                  <HDRToneMap:Gamma>1.000000</HDRToneMap:Gamma>
+                  <HDRToneMap:BaseOffset>0.000010</HDRToneMap:BaseOffset>
+                  <HDRToneMap:AlternateOffset>0.000010</HDRToneMap:AlternateOffset>
+               </rdf:li>
+            </rdf:Seq>
+         </HDRToneMap:ChannelMetadata>
+         <HDRToneMap:BaseColorIsWorkingColor>True</HDRToneMap:BaseColorIsWorkingColor>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>

@@ -50,11 +50,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		09AE6D922CA6D3B40032A81C /* toGainMapHDR */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = toGainMapHDR; sourceTree = BUILT_PRODUCTS_DIR; };
+		09AE6D922CA6D3B40032A81C /* toGainMapHDR */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = toGainMapHDR; path = /Users/luyao/Documents/GitHub/toGainMapHDR/build/Debug/toGainMapHDR; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		09AE6D942CA6D3B40032A81C /* toGainMapHDR */ = {
+		09ACAE4F2F8CE10C00D17A1D /* toGainMapHDR */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = toGainMapHDR;
 			sourceTree = "<group>";
@@ -75,17 +75,8 @@
 		09AE6D892CA6D3B40032A81C = {
 			isa = PBXGroup;
 			children = (
-				09AE6D942CA6D3B40032A81C /* toGainMapHDR */,
-				09AE6D932CA6D3B40032A81C /* Products */,
+				09ACAE4F2F8CE10C00D17A1D /* toGainMapHDR */,
 			);
-			sourceTree = "<group>";
-		};
-		09AE6D932CA6D3B40032A81C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				09AE6D922CA6D3B40032A81C /* toGainMapHDR */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,7 +97,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				09AE6D942CA6D3B40032A81C /* toGainMapHDR */,
+				09ACAE4F2F8CE10C00D17A1D /* toGainMapHDR */,
 			);
 			name = toGainMapHDR;
 			packageProductDependencies = (
@@ -141,7 +132,7 @@
 			mainGroup = 09AE6D892CA6D3B40032A81C;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 09AE6D932CA6D3B40032A81C /* Products */;
+			productRefGroup = 09AE6D892CA6D3B40032A81C;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -289,6 +280,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -302,6 +294,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

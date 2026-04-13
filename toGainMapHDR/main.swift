@@ -12,7 +12,7 @@ import ImageIO
 import UniformTypeIdentifiers
 
 let ctx = CIContext()
-let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0).\n             ratio = 1.0: keep full highlight details\n             ratio >> 10: lose all highlight details\n         -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H <value>: Apple gain map subsample factor, between 1.0 (full size, default) and 2.0 (half size)\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
+let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0).\n             ratio = 1.0: keep full highlight details\n             ratio >> 10: lose all highlight details\n         -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H <value>: gain map subsample factor, 1 for full size (default) and 2 for half size\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
 guard arguments.count > 2 else {
     print(help_info)
@@ -224,7 +224,8 @@ if imagequality! < 0 || imagequality! > 1 {
     print("Error: The -q option requires a valid numeric value.")
     exit(1)
 }
-if scaling_ratio! < 1 || scaling_ratio! > 2 {
+if scaling_ratio! == 1.0 || scaling_ratio! == 2.0 {}
+else{
     print("Error: The -H option requires a valid numeric value.")
     exit(1)
 }
@@ -277,6 +278,14 @@ private func getGainMap(hdr_input: CIImage,sdr_input: CIImage,hdr_max: Float) ->
     let outputImage = filter.outputImage
     return outputImage!
 }
+private func getRGBGainMap(hdr_input: CIImage,sdr_input: CIImage,hdr_max: Float) -> CIImage {
+    let filter = RGBGainMapFilter()
+    filter.HDRImage = hdr_input
+    filter.SDRImage = sdr_input
+    filter.hdrmax = hdr_max
+    let outputImage = filter.outputImage
+    return outputImage!
+}
 
 func lanczosResizeImage(originalImage: CIImage, ratio: Float) -> CIImage {
     let lanczosScaleFilter = CIFilter.lanczosScaleTransform()
@@ -315,12 +324,12 @@ func maxLuminance(from ciImage: CIImage) -> Float? {
 var pic_headroom : Float
 var pic_headroom2 : Float
 var headroom_ratio : Float
-var tonemapped_sdrimage : CIImage?
 var sdr_headroom : Float
 
-pic_headroom = maxLuminance(from: hdr_image)!
+
 
 let transform = CGAffineTransform(scaleX: 1.0 / CGFloat(tonemappingratio!), y: 1.0 / CGFloat(tonemappingratio!))
+pic_headroom = maxLuminance(from: hdr_image)!
 pic_headroom2 = maxLuminance(from: hdr_image.transformed(by: transform))!
 
 if pic_headroom < 1.05 {
@@ -350,23 +359,24 @@ func generate_sdr_image() -> CIImage?{
     return hdr_image.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":headroom_ratio,"inputTargetHeadroom":1.0])
 }
 
-tonemapped_sdrimage = generate_sdr_image()!
+
 
 while sdr_export{
+    let tonemapped_sdrimage = generate_sdr_image()!
     let sdr_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85])
     if jpg_export{
-        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage!,
+        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage,
                                          to: url_export_jpg,
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options:sdr_export_options as! [CIImageRepresentationOption : Any])
     } else {
         if ten_bit{
-            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
                                                to: url_export_heic,
                                                colorSpace: CGColorSpace(name: sdr_color_space)!,
                                                options:sdr_export_options as! [CIImageRepresentationOption : Any])
         } else {
-            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
+            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
                                              to: url_export_heic,
                                              format: CIFormat.RGBA8,
                                              colorSpace: CGColorSpace(name: sdr_color_space)!,
@@ -378,21 +388,22 @@ while sdr_export{
 
 // -b: export RGB gain map image with specified base image
 if base_image_bool {
+    let tonemapped_sdrimage = generate_sdr_image()!
     let rgb_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image,CIImageRepresentationOption.hdrGainMapAsRGB:true])
     
     if jpg_export {
-        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage!,
+        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage,
                                          to: url_export_jpg,
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options: rgb_export_options as! [CIImageRepresentationOption : Any])
     } else {
         if ten_bit {
-            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
                                                to: url_export_heic,
                                                colorSpace: CGColorSpace(name: sdr_color_space)!,
                                                options: rgb_export_options as! [CIImageRepresentationOption : Any])
         } else {
-            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
+            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
                                              to: url_export_heic,
                                              format: CIFormat.RGBA8,
                                              colorSpace: CGColorSpace(name: sdr_color_space)!,
@@ -402,27 +413,107 @@ if base_image_bool {
     exit(0)
 }
 
-// export adaptive gain map image (default format)
+// export RGB gain map in ARGB format
+if !apple_gain_map && half_size {
+    pic_headroom = 16
+    let tonemapped_sdrimage = generate_sdr_image()!
+    let rgb_gain_map = getRGBGainMap(hdr_input: hdr_image, sdr_input: tonemapped_sdrimage, hdr_max: pic_headroom)
+    let tmp_heic_ciimage = lanczosResizeImage(originalImage: rgb_gain_map, ratio: scaling_ratio!)
+
+    let tmp_height = Int(tmp_heic_ciimage.extent.height)
+    let tmp_width = Int(tmp_heic_ciimage.extent.width)
+
+
+    var gainMapImageData = Data(count: tmp_height * tmp_width * 4)
+    
+                                       
+    gainMapImageData.withUnsafeMutableBytes {
+        if let baseAddress = $0.baseAddress {
+            ctx.render(
+                tmp_heic_ciimage,
+                toBitmap: baseAddress,
+                rowBytes: tmp_width * 4,
+                bounds: tmp_heic_ciimage.extent,
+                format: CIFormat.ARGB8,
+                colorSpace: CGColorSpace(name: CGColorSpace.linearITUR_2020)!
+            )
+        }
+    }
+    
+
+    var dict: [CFString: Any] = [:]
+    
+    let xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0)
+    let xmlData = xmlString.data(using: .utf8)
+    
+    let metaData = CGImageMetadataCreateFromXMPData(xmlData! as CFData)
+    let metaDataDescription: Any? = [
+        "PixelFormat": 32,
+        "Width": String(tmp_width),
+        "Height": String(Int(tmp_height)),
+        "BytesPerRow": String(tmp_width*4)
+      ]
+    let metaDataInfo: Any? = CGColorSpace(name: sdr_color_space)!
+    
+    dict[kCGImageAuxiliaryDataInfoMetadata] = metaData
+    dict[kCGImageAuxiliaryDataInfoDataDescription] = metaDataDescription
+    dict[kCGImageAuxiliaryDataInfoColorSpace] = metaDataInfo
+    dict[kCGImageAuxiliaryDataInfoData] = gainMapImageData
+    
+    let auxDict = dict as CFDictionary
+    
+    
+    let dest = CGImageDestinationCreateWithURL(
+        url_export_heic as CFURL,
+        UTType.heic.identifier as CFString,
+        1,
+        nil
+        )
+    
+    let context = CIContext(options: [CIContextOption.outputColorSpace:CGColorSpace(name: sdr_color_space)!])
+    
+    let baseCG = context.createCGImage(tonemapped_sdrimage, from: tonemapped_sdrimage.extent)
+    let properties = hdr_image.properties
+    
+    var export_options: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: imagequality ?? 0.85]
+    for (key, value) in properties {
+        export_options[key as CFString] = value
+    }
+    
+    CGImageDestinationAddImage(dest!, baseCG!, export_options as CFDictionary)
+    
+    CGImageDestinationAddAuxiliaryDataInfo(
+            dest!,
+            kCGImageAuxiliaryDataTypeISOGainMap,
+            auxDict
+        )
+    CGImageDestinationFinalize(dest!)
+    exit(0)
+}
+
+// export RGB gain map in YUV format (default format)
 if !apple_gain_map {
     var adaptive_export_options: NSDictionary
+    
+    let tonemapped_sdrimage = generate_sdr_image()!
     if monochrome_export {
         adaptive_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image,CIImageRepresentationOption.hdrGainMapAsRGB:false])
     } else {
         adaptive_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image,CIImageRepresentationOption.hdrGainMapAsRGB:true])
     }
     if jpg_export {
-        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage!,
+        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage,
                                          to: url_export_jpg,
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options: adaptive_export_options as! [CIImageRepresentationOption : Any])
     } else {
         if ten_bit {
-            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage!,
+            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
                                                to: url_export_heic,
                                                colorSpace: CGColorSpace(name: sdr_color_space)!,
                                                options: adaptive_export_options as! [CIImageRepresentationOption : Any])
         } else {
-            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage!,
+            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
                                              to: url_export_heic,
                                              format: CIFormat.RGBA8,
                                              colorSpace: CGColorSpace(name: sdr_color_space)!,
@@ -435,7 +526,8 @@ if !apple_gain_map {
 // -g: Apple HDR gain map by CIFilter
 if apple_gain_map {
     var gain_map : CIImage
-    gain_map = getGainMap(hdr_input: hdr_image, sdr_input: tonemapped_sdrimage!, hdr_max: pic_headroom)
+    let tonemapped_sdrimage = generate_sdr_image()!
+    gain_map = getGainMap(hdr_input: hdr_image, sdr_input: tonemapped_sdrimage, hdr_max: pic_headroom)
 
     if half_size{
         gain_map = lanczosResizeImage(originalImage: gain_map, ratio: scaling_ratio!)
@@ -461,8 +553,8 @@ if apple_gain_map {
     }
     
     imageProperties[kCGImagePropertyMakerAppleDictionary as String] = makerApple
-    let modifiedImage = tonemapped_sdrimage!.settingProperties(imageProperties)
-
+    let modifiedImage = tonemapped_sdrimage.settingProperties(imageProperties)
+    
     let alt_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrGainMapImage:gain_map])
     if jpg_export {
         try! ctx.writeJPEGRepresentation(of: modifiedImage,

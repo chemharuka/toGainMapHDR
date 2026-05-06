@@ -49,7 +49,7 @@ There are some issues with Intel Mac, not all features available.
 
 PLEASE UPGRADE your system to LATEST version for more compatibility.
 
-#### Options:
+### Options:
 
 default: output HDR-heic with ISO gain map in RGB
 
@@ -104,7 +104,7 @@ default: Adaptive gain map use YUV420 encoded image, the gain map is created as 
 
 -H only: Using the `-H` parameter alone will generate ARGB8 encoded Adaptive gain map. However, this format currently suffers from poor compatibility.
 
-#### File Size and Quality
+### File Size and Quality
 
 Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 
@@ -135,9 +135,7 @@ Compare with other HDR formats exported by LR.
 | AVIF (quality 100, PQ HDR)      | 7.7 MB     | 46.31   |
 | JXL (quality 85, PQ HDR)        | 4.9 MB     | 41.30   |
 
-
-
-#### Sample images for options
+### Sample images for options
 
 Quality for 8 bit heic SDR export: (-s -q 0.2~1.0)
 
@@ -172,8 +170,7 @@ Apple Gain Map scaling ratio: (-j -g -H1.0~2.0).
 | H1.6 574K | H1.8 536K  | H2.0 556K |
 | ![test-g-H1 6](https://github.com/user-attachments/assets/04c4d28c-85cf-453b-bf37-83f267f9f817) | ![test-g-H2 0](https://github.com/user-attachments/assets/3577201f-175e-43b1-87c8-693e163013e2) | ![test-g-H1 8](https://github.com/user-attachments/assets/6f0788a4-d44f-4ee1-b463-c197d5004806) |
 
-
-#### Sample command：
+### Sample command：
 
  `./toGainMapHDR ~/Downloads/abc.png ~/Documents/ -q 0.95 -d 10 -c rec2020`
 

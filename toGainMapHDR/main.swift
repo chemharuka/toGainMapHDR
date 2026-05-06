@@ -12,7 +12,7 @@ import ImageIO
 import UniformTypeIdentifiers
 
 let ctx = CIContext()
-let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0)\n             ratio = 1.0: keep full highlight details\n             ratio >> 10: lose all highlight details\n         -R <value>: max headroom for tone mapping (default: 8)\n             -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 8)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H <value>: gain map subsample factor, 1 for full size (default) and 2 for half size\n         -s: export tone mapped SDR image without HDR gain map\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
+let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0)\n             ratio = 1.0: keep full highlight details\n             ratio >> 10: lose all highlight details\n         -R <value>: max headroom for tone mapping (default: 6)\n         -R will also limit headroom for Apple gain map\n             -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 6)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H <value>: gain map subsample factor, 1 for full size (default) and 2 for half size\n         -s: export tone mapped SDR image\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
 guard arguments.count > 2 else {
     print(help_info)
@@ -30,7 +30,7 @@ var base_image_url : URL?
 
 var imagequality: Double? = 0.85
 var tonemappingratio: Float? = 3.0
-var max_headroom: Float? = 8.0
+var max_headroom: Float? = 6.0
 var tonemappingratio_bool : Bool = false
 var base_image_bool : Bool = false
 var sdr_export: Bool = false
@@ -583,13 +583,13 @@ if !apple_gain_map {
 if apple_gain_map {
     var gain_map : CIImage
     let tonemapped_sdrimage = generate_sdr_image()!
-    gain_map = getGainMap(hdr_input: hdr_image, sdr_input: tonemapped_sdrimage, hdr_max: pic_headroom)
+    gain_map = getGainMap(hdr_input: hdr_image, sdr_input: tonemapped_sdrimage, hdr_max: max_headroom!)
 
     if half_size{
         gain_map = lanczosResizeImage(originalImage: gain_map)
     }
     
-    let stops = log2(pic_headroom)
+    let stops = log2(max_headroom!)
     var imageProperties = hdr_image.properties
     var makerApple = imageProperties[kCGImagePropertyMakerAppleDictionary as String] as? [String: Any] ?? [:]
 

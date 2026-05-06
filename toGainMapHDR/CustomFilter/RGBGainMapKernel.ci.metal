@@ -16,15 +16,9 @@ extern "C" float4 RGBGainMapFilter(coreimage::sample_t hdr, coreimage::sample_t 
     float g_ratio;
     float b_ratio;
     
-    if (sdr.r > 1.0) {
-        sdr.r = 1.0;
-    }
-    if (sdr.g > 1.0) {
-        sdr.g = 1.0;
-    }
-    if (sdr.b > 1.0) {
-        sdr.b = 1.0;
-    }
+    sdr.r = sdr.r > 1.0f ? 1.0f : sdr.r;
+    sdr.g = sdr.g > 1.0f ? 1.0f : sdr.g;
+    sdr.b = sdr.b > 1.0f ? 1.0f : sdr.b;
 
     r_ratio = log2((hdr.r + 0.000010)/(sdr.r + 0.000010));
     g_ratio = log2((hdr.g + 0.000010)/(sdr.g + 0.000010));
@@ -34,16 +28,10 @@ extern "C" float4 RGBGainMapFilter(coreimage::sample_t hdr, coreimage::sample_t 
     g_ratio = g_ratio/log2(hdrmax);
     b_ratio = b_ratio/log2(hdrmax);
     
-    if (r_ratio > 1.0) {
-        r_ratio = 1.0;
-    }
-    if (g_ratio > 1.0) {
-        g_ratio = 1.0;
-    }
-    if (b_ratio > 1.0) {
-        b_ratio = 1.0;
-    }
-    
+    r_ratio = r_ratio > 1.0f ? 1.0f : r_ratio;
+    g_ratio = g_ratio > 1.0f ? 1.0f : g_ratio;
+    b_ratio = b_ratio > 1.0f ? 1.0f : b_ratio;
+
 
     return float4(r_ratio, g_ratio, b_ratio, 1.0);
 }

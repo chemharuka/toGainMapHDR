@@ -60,6 +60,8 @@ default: output HDR-heic with ISO gain map in RGB
     ratio = 1.0: keep full highlight details
     ratio >> 10: lose all highlight details
 
+-R \<value>: max headroom for tone mapping (default: 8)
+
 -b \<file_path>: specify the base image
 
 -t \<text>: add extra text after the output file name
@@ -163,9 +165,9 @@ convert gain map abc.avif to gain map heic file and keep base image:
 
  `./toGainMapHDR ~/Downloads/abc.avif ~/Documents/ -b ./Downloads/abc.avif` 
 
-convert abc.tiff to Apple HDR by CIFilter and scale gain map to 0.67x:
+convert abc.tiff to Apple HDR by CIFilter and subsample gain map to half size:
 
- `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g -H 1.5` 
+ `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g -H 2` 
 
 convert abc.tiff to HLG HDR file:
 
@@ -177,10 +179,11 @@ convert RGB gain map (adaptive HDR) file to monochrome gain map (Apple HDR) heic
 
 #### Note: 
 
-1. Using a specific base photo will result larger file size
-2. Scaling the gain map can reduce file size, with slightly lose highlight detail
-3. \*\* Monochrome gain map compatible with Google Photos (Android version), Instagram, Edge Browser etc. Recommended to use for sharing.
-4. When exporting 8-bit heic image, color discontinuity may occur in low-texture areas, like clouds, lakes.
+1. Using a specific base photo will result larger file size.
+2. Subsample the gain map can reduce file size, with slightly lose highlight detail.
+3. Images with odd extent will be cropped by 1 pixel while subsampling.
+4. \*\* Apple gain map compatible with Google Photos (Android version), Instagram, Edge Browser etc. Recommended to use for sharing.
+5. When exporting 8-bit heic image, color discontinuity may occur in low-texture areas, like clouds, lakes.
 
 ### heic_hdr.py
 

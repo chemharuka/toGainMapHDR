@@ -43,7 +43,7 @@ CIImage cannot handle the brightness of Apple gain map HDR correctly, not recomm
 
 #### System Require
 
-Require macOS 15.0+. Fully tested on Apple Silicon.
+Require macOS 26.0+. Fully tested on Apple Silicon.
 
 There are some issues with Intel Mac, not all features available. 
 
@@ -62,7 +62,7 @@ default: output HDR-heic with ISO gain map in RGB
 
 -R \<value>: max headroom for tone mapping (default: 6.0)
 
--R will also limit headroom for Apple gain map
+​    -R will also limit headroom for Apple gain map
 
 -b \<file_path>: specify the base image
 
@@ -87,6 +87,22 @@ default: output HDR-heic with ISO gain map in RGB
 -j: export image in JPEG format (work with SDR or gain map HDR exporting)
 
 -help: print help information
+
+#### Notes for options
+
+-r: Reduce the picture by -r times, and then measure the maximum brightness at this time as the headroom, this headroom will be used for tone mapping
+
+-R: If -R is less than -r, this value will be used for tone mapping.
+
+-g: Apple gain map use monochrome L8 image with Rec709 like non-linear transformation as gain map.
+
+-H -g: Use half size gain map in Apple gain map. If the width or length is not a multiple of 2, one row or column will be cropped.
+
+default: Adaptive gain map use YUV420 encoded image, the gain map is created as a color ratio.
+
+-m: Adaptive gain map created as a brightness ratio.
+
+-H only: Using the `-H` parameter alone will generate ARGB8 encoded Adaptive gain map. However, this format currently suffers from poor compatibility.
 
 #### File Size and Quality
 

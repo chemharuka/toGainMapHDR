@@ -229,13 +229,7 @@ HDR export: (-j -r 1.0~50.0). Edge.app on macOS not support RGB HDR, view HDR ef
 | ratio6.0 | ratio20.0 | ratio50.0|
 | ![_12742706 0](https://github.com/user-attachments/assets/ac5e1680-8298-40ff-be06-913814e0495e) | ![_127427020 0](https://github.com/user-attachments/assets/d80979cf-ab1d-4813-adbb-7a3eff16ee58) | ![_127427050 0](https://github.com/user-attachments/assets/8c3df467-61c1-4f75-889c-412bccf565a4) |
 
-Apple Gain Map scaling ratio: (-j -g -H1.0~2.0).
 
-| H1.0 725K | H1.2 644K  | H1.4 606K |
-| -------- | --------- | -------- |
-| ![test-g-H1 0](https://github.com/user-attachments/assets/2562d159-0843-4ae9-b8f6-e7cc8c9dd67e) | ![test-g-H1 2](https://github.com/user-attachments/assets/34eca108-a873-4a2a-9cc6-828415dc33ed) | ![test-g-H1 4](https://github.com/user-attachments/assets/5ffe1615-781d-4599-b878-e2e7f39cc31d) |
-| H1.6 574K | H1.8 536K  | H2.0 556K |
-| ![test-g-H1 6](https://github.com/user-attachments/assets/04c4d28c-85cf-453b-bf37-83f267f9f817) | ![test-g-H2 0](https://github.com/user-attachments/assets/3577201f-175e-43b1-87c8-693e163013e2) | ![test-g-H1 8](https://github.com/user-attachments/assets/6f0788a4-d44f-4ee1-b463-c197d5004806) |
 
 
 ## Known Issue

@@ -387,10 +387,15 @@ if base_image_bool == false {
     if pic_headroom2 < 1.0 {
         pic_headroom2 = 1.0
     }
+    
     if pic_headroom2 > headroom_ratio {
         print("Warning: Picture headroom > max headroom (set with -R parameter), highlight clipped.")
     } else {
         headroom_ratio = pic_headroom2
+    }
+    
+    if max_headroom! > pic_headroom {
+        max_headroom = pic_headroom
     }
 }
 

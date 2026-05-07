@@ -306,7 +306,7 @@ private func getRGBGainMap(hdr_input: CIImage,sdr_input: CIImage,hdr_max: Float)
 func lanczosResizeImage(originalImage: CIImage) -> CIImage {
     let lanczosScaleFilter = CIFilter.lanczosScaleTransform()
     lanczosScaleFilter.inputImage = originalImage
-    lanczosScaleFilter.scale = 1
+    lanczosScaleFilter.scale = 0.5
     lanczosScaleFilter.aspectRatio = 1
     return lanczosScaleFilter.outputImage!
 }

@@ -62,8 +62,6 @@ default: output HDR-heic with ISO gain map in RGB
 
 -R \<value>: max headroom for tone mapping (default: 6.0)
 
-​    -R will also limit headroom for Apple gain map
-
 -b \<file_path>: specify the base image
 
 -t \<text>: add extra text after the output file name
@@ -90,9 +88,9 @@ default: output HDR-heic with ISO gain map in RGB
 
 #### Notes for options
 
--r: Reduce the picture by -r times, and then measure the maximum brightness at this time as the headroom, this headroom will be used for tone mapping
+-r: Reduce the picture by `-r` times, and then measure the maximum brightness at this time as the headroom, this headroom will be used for tone mapping.
 
--R: If -R is less than -r, this value will be used for tone mapping.
+-R: If `-R` is less than `-r`, this value will be used for tone mapping. `-R` value will also limit headroom of Apple gain map.
 
 -g: Apple gain map use monochrome L8 image with Rec709 like non-linear transformation as gain map.
 
@@ -103,72 +101,6 @@ default: Adaptive gain map use YUV420 encoded image, the gain map is created as 
 -m: Adaptive gain map created as a brightness ratio.
 
 -H only: Using the `-H` parameter alone will generate ARGB8 encoded Adaptive gain map. However, this format currently suffers from poor compatibility.
-
-### File Size and Quality
-
-Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
-
-| options                            | JPG     | HEIC    | PSNR/dB | PSNR/dB |
-| ---------------------------------- | ------- | ------- | ------- | ------- |
-| -p (PQ HDR 10 bit)                 | -       | 5.6 MB  |         | 43.93   |
-| -p -q 100                          | -       | 21.5 MB |         | 50.42   |
-| -h -d 8 (HLG 8 bit)                | -       | 3.3 MB  |         | ≈40.14  |
-| -h (HLG 10 bit)                    | -       | 7.4 MB  |         | ≈44.82  |
-| -s (SDR image)                     | 7.5 MB  | 3.9 MB  | 27.94   | 27.83   |
-| -g (Apple HDR)                     | 11.1 MB | 6.5 MB  | 40.83   | ≈39.47  |
-| -g -H 2.0 (with subsample)         | 8.4 MB  | 4.6 MB  | 40.66   | ≈39.27  |
-| -g -d 10 (Apple HDR in 10 bit)     | -       | 11.0 MB |         | ≈42.38  |
-| default (ISO Gain Map HDR)         | 11.5 MB | 7.4 MB  | 43.03   | 41.43   |
-| -d 10 (ISO Gain Map HDR in 10 bit) | -       | 11.9 MB |         | 46.08   |
-| -q 100 (ISO Gain Map best quality) | 27.5 MB | 26.4 MB | 48.75   | 48.49   |
-
-Compare with other HDR formats exported by LR.
-
-| Format                          | Size       | PSNR/dB |
-| ------------------------------- | ---------- | ------- |
-| UltraHDR (quality 60)           | 5.1 MB     | 36.96   |
-| UltraHDR (quality 85)           | 19.7 MB    | 45.58   |
-| AVIF (quality 70 with gain map) | 4.7 MB     | 38.65   |
-| AVIF (quality 85 with gain map) | 7.3 MB     | 41.37   |
-| AVIF (quality 85, PQ HDR)       | 1.9 MB     | 37.76   |
-| AVIF (quality 95, PQ HDR)       | 2.7 MB     | 39.63   |
-| AVIF (quality 100, PQ HDR)      | 7.7 MB     | 46.31   |
-| JXL (quality 85, PQ HDR)        | 4.9 MB     | 41.30   |
-
-### Sample images for options
-
-Quality for 8 bit heic SDR export: (-s -q 0.2~1.0)
-
-| -s -q                                                        |                                                              |                                                              |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| quality0.2    34.22 dB                                       | quality0.4    37.78 dB                                       | quality0.6    41.34 dB                                       |
-| ![test-q=0 2](https://github.com/user-attachments/assets/f6916630-e607-4393-94ab-531b01217f2f) | ![test-q=0 4](https://github.com/user-attachments/assets/78735c04-91ee-42e8-8793-b4bb4a13f5cf) | ![test-q=0 6](https://github.com/user-attachments/assets/2ce8b0c5-5557-4eb2-a915-6355bdd45005) |
-| quality0.8    45.33 dB                                       | quality1.0    50.31 dB                                       |                                                              |
-| ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
-
-SDR mapping ratio for jpg SDR export: (-s -j -r 1.0~50.0)
-
-| ratio1.0                                                     | ratio2.0                                                     | ratio3.0                                                     |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![DJI_air3_2250_D1 0](https://github.com/user-attachments/assets/1a305539-49b0-4c53-8b31-28e907c4f21c) | ![DJI_air3_2250_D2 0](https://github.com/user-attachments/assets/0ba575b9-8a80-442b-bff3-bcf744d86955) | ![DJI_air3_2250_D3 0](https://github.com/user-attachments/assets/96a90f9b-c4ae-420c-bca9-5107ff4aa253) |
-| ratio6.0                                                     | ratio20.0                                                     | ratio50.0                                                     |
-| ![DJI_air3_2250_D6 0](https://github.com/user-attachments/assets/b9feda17-9e05-4787-aa1d-f0fb68ab5966) | ![DJI_air3_2250_D20 0](https://github.com/user-attachments/assets/93ab6610-1a69-4074-be8f-f9651552dbd3) | ![DJI_air3_2250_D50 0](https://github.com/user-attachments/assets/967d2a61-6d74-446e-8dbe-655e3614bd60) |
-
-HDR export: (-j -r 1.0~50.0). Edge.app on macOS not support RGB HDR, view HDR effect on Safari.app.
-
-| ratio1.0 | ratio2.0  | ratio3.0 |
-| -------- | --------- | -------- |
-| ![_12742701 0](https://github.com/user-attachments/assets/42e406d3-2d23-45ec-baa5-22837e2ee846) | ![_12742702 0](https://github.com/user-attachments/assets/b6e6b2b5-7c7e-4718-8b9d-1eca6a038fb5) | ![_12742703 0](https://github.com/user-attachments/assets/3a791f5d-da6a-4175-a1e6-bd4a5f865421) |
-| ratio6.0 | ratio20.0 | ratio50.0|
-| ![_12742706 0](https://github.com/user-attachments/assets/ac5e1680-8298-40ff-be06-913814e0495e) | ![_127427020 0](https://github.com/user-attachments/assets/d80979cf-ab1d-4813-adbb-7a3eff16ee58) | ![_127427050 0](https://github.com/user-attachments/assets/8c3df467-61c1-4f75-889c-412bccf565a4) |
-
-Apple Gain Map scaling ratio: (-j -g -H1.0~2.0).
-
-| H1.0 725K | H1.2 644K  | H1.4 606K |
-| -------- | --------- | -------- |
-| ![test-g-H1 0](https://github.com/user-attachments/assets/2562d159-0843-4ae9-b8f6-e7cc8c9dd67e) | ![test-g-H1 2](https://github.com/user-attachments/assets/34eca108-a873-4a2a-9cc6-828415dc33ed) | ![test-g-H1 4](https://github.com/user-attachments/assets/5ffe1615-781d-4599-b878-e2e7f39cc31d) |
-| H1.6 574K | H1.8 536K  | H2.0 556K |
-| ![test-g-H1 6](https://github.com/user-attachments/assets/04c4d28c-85cf-453b-bf37-83f267f9f817) | ![test-g-H2 0](https://github.com/user-attachments/assets/3577201f-175e-43b1-87c8-693e163013e2) | ![test-g-H1 8](https://github.com/user-attachments/assets/6f0788a4-d44f-4ee1-b463-c197d5004806) |
 
 ### Sample command：
 
@@ -238,6 +170,73 @@ Sample 2: (Sanqing Mountain as World Heritage, Jiangxi, China)
 
 Sample 3: (Kanbula National Park, Qinghai, China)
 ![DJI_1_0927_D](https://github.com/user-attachments/assets/66da879e-d56a-4bae-8185-d2d7d462e10f)
+
+### File Size and Quality
+
+Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
+
+| options                            | JPG     | HEIC    | PSNR/dB | PSNR/dB |
+| ---------------------------------- | ------- | ------- | ------- | ------- |
+| -p (PQ HDR 10 bit)                 | -       | 5.6 MB  |         | 43.93   |
+| -p -q 100                          | -       | 21.5 MB |         | 50.42   |
+| -h -d 8 (HLG 8 bit)                | -       | 3.3 MB  |         | ≈40.14  |
+| -h (HLG 10 bit)                    | -       | 7.4 MB  |         | ≈44.82  |
+| -s (SDR image)                     | 7.5 MB  | 3.9 MB  | 27.94   | 27.83   |
+| -g (Apple HDR)                     | 11.1 MB | 6.5 MB  | 40.83   | ≈39.47  |
+| -g -H 2.0 (with subsample)         | 8.4 MB  | 4.6 MB  | 40.66   | ≈39.27  |
+| -g -d 10 (Apple HDR in 10 bit)     | -       | 11.0 MB |         | ≈42.38  |
+| default (ISO Gain Map HDR)         | 11.5 MB | 7.4 MB  | 43.03   | 41.43   |
+| -d 10 (ISO Gain Map HDR in 10 bit) | -       | 11.9 MB |         | 46.08   |
+| -q 100 (ISO Gain Map best quality) | 27.5 MB | 26.4 MB | 48.75   | 48.49   |
+
+Compare with other HDR formats exported by LR.
+
+| Format                          | Size       | PSNR/dB |
+| ------------------------------- | ---------- | ------- |
+| UltraHDR (quality 60)           | 5.1 MB     | 36.96   |
+| UltraHDR (quality 85)           | 19.7 MB    | 45.58   |
+| AVIF (quality 70 with gain map) | 4.7 MB     | 38.65   |
+| AVIF (quality 85 with gain map) | 7.3 MB     | 41.37   |
+| AVIF (quality 85, PQ HDR)       | 1.9 MB     | 37.76   |
+| AVIF (quality 95, PQ HDR)       | 2.7 MB     | 39.63   |
+| AVIF (quality 100, PQ HDR)      | 7.7 MB     | 46.31   |
+| JXL (quality 85, PQ HDR)        | 4.9 MB     | 41.30   |
+
+### Sample images for options
+
+Quality for 8 bit heic SDR export: (-s -q 0.2~1.0)
+
+| -s -q                                                        |                                                              |                                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| quality0.2    34.22 dB                                       | quality0.4    37.78 dB                                       | quality0.6    41.34 dB                                       |
+| ![test-q=0 2](https://github.com/user-attachments/assets/f6916630-e607-4393-94ab-531b01217f2f) | ![test-q=0 4](https://github.com/user-attachments/assets/78735c04-91ee-42e8-8793-b4bb4a13f5cf) | ![test-q=0 6](https://github.com/user-attachments/assets/2ce8b0c5-5557-4eb2-a915-6355bdd45005) |
+| quality0.8    45.33 dB                                       | quality1.0    50.31 dB                                       |                                                              |
+| ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
+
+SDR mapping ratio for jpg SDR export: (-s -j -r 1.0~50.0)
+
+| ratio1.0                                                     | ratio2.0                                                     | ratio3.0                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![DJI_air3_2250_D1 0](https://github.com/user-attachments/assets/1a305539-49b0-4c53-8b31-28e907c4f21c) | ![DJI_air3_2250_D2 0](https://github.com/user-attachments/assets/0ba575b9-8a80-442b-bff3-bcf744d86955) | ![DJI_air3_2250_D3 0](https://github.com/user-attachments/assets/96a90f9b-c4ae-420c-bca9-5107ff4aa253) |
+| ratio6.0                                                     | ratio20.0                                                     | ratio50.0                                                     |
+| ![DJI_air3_2250_D6 0](https://github.com/user-attachments/assets/b9feda17-9e05-4787-aa1d-f0fb68ab5966) | ![DJI_air3_2250_D20 0](https://github.com/user-attachments/assets/93ab6610-1a69-4074-be8f-f9651552dbd3) | ![DJI_air3_2250_D50 0](https://github.com/user-attachments/assets/967d2a61-6d74-446e-8dbe-655e3614bd60) |
+
+HDR export: (-j -r 1.0~50.0). Edge.app on macOS not support RGB HDR, view HDR effect on Safari.app.
+
+| ratio1.0 | ratio2.0  | ratio3.0 |
+| -------- | --------- | -------- |
+| ![_12742701 0](https://github.com/user-attachments/assets/42e406d3-2d23-45ec-baa5-22837e2ee846) | ![_12742702 0](https://github.com/user-attachments/assets/b6e6b2b5-7c7e-4718-8b9d-1eca6a038fb5) | ![_12742703 0](https://github.com/user-attachments/assets/3a791f5d-da6a-4175-a1e6-bd4a5f865421) |
+| ratio6.0 | ratio20.0 | ratio50.0|
+| ![_12742706 0](https://github.com/user-attachments/assets/ac5e1680-8298-40ff-be06-913814e0495e) | ![_127427020 0](https://github.com/user-attachments/assets/d80979cf-ab1d-4813-adbb-7a3eff16ee58) | ![_127427050 0](https://github.com/user-attachments/assets/8c3df467-61c1-4f75-889c-412bccf565a4) |
+
+Apple Gain Map scaling ratio: (-j -g -H1.0~2.0).
+
+| H1.0 725K | H1.2 644K  | H1.4 606K |
+| -------- | --------- | -------- |
+| ![test-g-H1 0](https://github.com/user-attachments/assets/2562d159-0843-4ae9-b8f6-e7cc8c9dd67e) | ![test-g-H1 2](https://github.com/user-attachments/assets/34eca108-a873-4a2a-9cc6-828415dc33ed) | ![test-g-H1 4](https://github.com/user-attachments/assets/5ffe1615-781d-4599-b878-e2e7f39cc31d) |
+| H1.6 574K | H1.8 536K  | H2.0 556K |
+| ![test-g-H1 6](https://github.com/user-attachments/assets/04c4d28c-85cf-453b-bf37-83f267f9f817) | ![test-g-H2 0](https://github.com/user-attachments/assets/3577201f-175e-43b1-87c8-693e163013e2) | ![test-g-H1 8](https://github.com/user-attachments/assets/6f0788a4-d44f-4ee1-b463-c197d5004806) |
+
 
 ## Known Issue
 

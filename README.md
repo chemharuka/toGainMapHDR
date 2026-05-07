@@ -92,7 +92,7 @@ default: output HDR-heic with ISO gain map in RGB
 
 -R: If `-R` is less than `-r` headroom, this value will be used for tone mapping. `-R` value will also limit headroom of Apple gain map.
 
--g: Apple gain map use monochrome L8 image with Rec709 like non-linear transformation as gain map.
+-g: Apple gain map use monochrome L8 image with Rec709 like non-linear transformation.
 
 -H -g: Use half size gain map in Apple gain map. If the width or length is not a multiple of 2, one row or column will be cropped.
 

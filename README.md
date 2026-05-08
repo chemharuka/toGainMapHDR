@@ -71,7 +71,7 @@ default: output HDR-heic with ISO gain map in RGB
 
 -c \<color space>: specify output color space (srgb, p3, rec2020)
 
--d \<color depth>: specify output color depth (default: 6)
+-d \<color depth>: specify output color depth (default: 8)
 
 -g: output Apple gain map HDR
 

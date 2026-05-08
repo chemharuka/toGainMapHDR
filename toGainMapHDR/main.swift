@@ -531,16 +531,53 @@ if !apple_gain_map && subsampling_bool && !monochrome_export{
 }
 
 // export subsampled monochrome gain map in L8 format
+// there are some compatibility issues
+// not recommended to use
+
 if !apple_gain_map && subsampling_bool && monochrome_export{
+
     let tonemapped_sdrimage = generate_sdr_image()!
-    let hdr_image_halfsize = lanczosResizeImage(hdr_image)
-    let tonemapped_sdrimage_halfsize = hdr_image_halfsize.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":headroom_ratio,"inputTargetHeadroom":1.0])
+    let rgb_gain_map = lanczosResizeImage(getRGBGainMap(hdr_input: hdr_image,sdr_input: tonemapped_sdrimage, hdr_max: pic_headroom))
     
-    let heif_data = ctx.heifRepresentation(of: tonemapped_sdrimage_halfsize, format: CIFormat.ARGB8, colorSpace: CGColorSpace(name: sdr_color_space)!, options: [CIImageRepresentationOption.hdrImage:hdr_image_halfsize,CIImageRepresentationOption.hdrGainMapAsRGB:false])
+    let tmp_height = Int(rgb_gain_map.extent.height)
+    let tmp_width = Int(rgb_gain_map.extent.width)
     
-    let cgimage_create = CGImageSourceCreateWithData(heif_data! as CFData, nil)
     
-    let aux_data = CGImageSourceCopyAuxiliaryDataInfoAtIndex(cgimage_create!, 0, kCGImageAuxiliaryDataTypeISOGainMap)
+    var gainMapImageData = Data(count: tmp_height * tmp_width)
+                                       
+    gainMapImageData.withUnsafeMutableBytes {
+        if let baseAddress = $0.baseAddress {
+            ctx.render(
+                rgb_gain_map,
+                toBitmap: baseAddress,
+                rowBytes: tmp_width,
+                bounds: rgb_gain_map.extent,
+                format: CIFormat.L8,
+                colorSpace: CGColorSpace(name: CGColorSpace.linearGray)!
+            )
+        }
+    }
+
+    var dict: [CFString: Any] = [:]
+    
+    let xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: false)
+    let xmlData = xmlString.data(using: .utf8)
+    
+    let metaData = CGImageMetadataCreateFromXMPData(xmlData! as CFData)
+    let metaDataDescription: Any? = [
+        "PixelFormat": 1278226488,
+        "Width": String(tmp_width),
+        "Height": String(tmp_height),
+        "BytesPerRow": String(tmp_width)
+      ]
+    let metaDataInfo: Any? = CGColorSpace(name: sdr_color_space)!
+    
+    dict[kCGImageAuxiliaryDataInfoMetadata] = metaData
+    dict[kCGImageAuxiliaryDataInfoDataDescription] = metaDataDescription
+    dict[kCGImageAuxiliaryDataInfoColorSpace] = metaDataInfo
+    dict[kCGImageAuxiliaryDataInfoData] = gainMapImageData
+    
+    let auxDict = dict as CFDictionary
 
     let dest = CGImageDestinationCreateWithURL(
         url_export_heic as CFURL,
@@ -552,8 +589,6 @@ if !apple_gain_map && subsampling_bool && monochrome_export{
     let context = CIContext(options: [CIContextOption.outputColorSpace:CGColorSpace(name: sdr_color_space)!])
     
     let baseCG = context.createCGImage(tonemapped_sdrimage, from: tonemapped_sdrimage.extent)
-    
-    
     let properties = hdr_image.properties
     
     var export_options: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: imagequality ?? 0.85]
@@ -566,13 +601,13 @@ if !apple_gain_map && subsampling_bool && monochrome_export{
     CGImageDestinationAddAuxiliaryDataInfo(
             dest!,
             kCGImageAuxiliaryDataTypeISOGainMap,
-            aux_data!
+            auxDict
         )
     CGImageDestinationFinalize(dest!)
     exit(0)
 }
 
-// export RGB gain map in YUV format (default format)
+// export gain map in YUV format (default format)
 if !apple_gain_map {
     var adaptive_export_options: NSDictionary
     

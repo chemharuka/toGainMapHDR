@@ -10,30 +10,23 @@
 
 using namespace metal;
 
+
+inline float process_channel(float hdr_value, float sdr_value, float hdrmax)
+{
+    float kcons = 0.000010f;
+    sdr_value = min(sdr_value, 1.0f);
+    float ratio = log2((hdr_value + kcons) / (sdr_value + kcons));
+    ratio = ratio / log2(hdrmax);
+    ratio = min(ratio, 1.0f);
+    return ratio;
+}
+
 extern "C" float4 RGBGainMapFilter(coreimage::sample_t hdr, coreimage::sample_t sdr,float hdrmax, coreimage::destination dest)
 {
-    float r_ratio;
-    float g_ratio;
-    float b_ratio;
-    
-    sdr.r = sdr.r > 1.0f ? 1.0f : sdr.r;
-    sdr.g = sdr.g > 1.0f ? 1.0f : sdr.g;
-    sdr.b = sdr.b > 1.0f ? 1.0f : sdr.b;
-
-    r_ratio = log2((hdr.r + 0.000010)/(sdr.r + 0.000010));
-    g_ratio = log2((hdr.g + 0.000010)/(sdr.g + 0.000010));
-    b_ratio = log2((hdr.b + 0.000010)/(sdr.b + 0.000010));
-    
-    r_ratio = r_ratio/log2(hdrmax);
-    g_ratio = g_ratio/log2(hdrmax);
-    b_ratio = b_ratio/log2(hdrmax);
-    
-    r_ratio = r_ratio > 1.0f ? 1.0f : r_ratio;
-    g_ratio = g_ratio > 1.0f ? 1.0f : g_ratio;
-    b_ratio = b_ratio > 1.0f ? 1.0f : b_ratio;
-
-
-    return float4(r_ratio, g_ratio, b_ratio, 1.0);
+    float r_ratio = process_channel(hdr.r, sdr.r, hdrmax);
+    float g_ratio = process_channel(hdr.g, sdr.g, hdrmax);
+    float b_ratio = process_channel(hdr.b, sdr.b, hdrmax);
+    return float4(r_ratio, g_ratio, b_ratio, 1.0f);
 }
 
 

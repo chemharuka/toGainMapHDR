@@ -50,7 +50,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		09AE6D922CA6D3B40032A81C /* toGainMapHDR */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = toGainMapHDR; path = /Users/luyao/Documents/GitHub/toGainMapHDR/build/Debug/toGainMapHDR; sourceTree = "<absolute>"; };
+		0983A6FB2FADCCCB0063E024 /* toGainMapHDR */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = toGainMapHDR; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -76,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				09ACAE4F2F8CE10C00D17A1D /* toGainMapHDR */,
+				0983A6FB2FADCCCB0063E024 /* toGainMapHDR */,
 			);
 			sourceTree = "<group>";
 		};
@@ -103,7 +104,7 @@
 			packageProductDependencies = (
 			);
 			productName = PQHDR_to_GainMapHDR;
-			productReference = 09AE6D922CA6D3B40032A81C /* toGainMapHDR */;
+			productReference = 0983A6FB2FADCCCB0063E024 /* toGainMapHDR */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */

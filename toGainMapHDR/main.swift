@@ -12,7 +12,7 @@ import ImageIO
 import UniformTypeIdentifiers
 
 let ctx = CIContext()
-let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 5.0)\n             ratio = 1.0: keep full highlight details\n             ratio >> 100: lose all highlight details\n         -R <value>: max headroom for tone mapping (default: 6)\n         -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 6)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H: subsampling gain map, output in half size\n         -s: export tone mapped SDR image\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
+let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0)\n             ratio = 1.0: keep full highlight details\n             ratio >> 100: lose all highlight details\n         -R <value>: max headroom for tone mapping (default: 6)\n         -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 6)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H: subsampling gain map to half size\n         -s: export tone mapped SDR image\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
 guard arguments.count > 2 else {
     print(help_info)
@@ -29,7 +29,7 @@ let imageoptions = arguments.dropFirst(3)
 var base_image_url : URL?
 
 var imagequality: Double? = 0.85
-var tonemappingratio: Float? = 5.0
+var tonemappingratio: Float? = 3.0
 var max_headroom: Float? = 6.0
 var tonemappingratio_bool : Bool = false
 var base_image_bool : Bool = false
@@ -325,6 +325,11 @@ func makeEvenSized(_ image: CIImage) -> CIImage {
     var newWidth = Int(extent.width)
     var newHeight = Int(extent.height)
     
+    if Int(extent.width) == 1 || Int(extent.height) == 1 {
+        print("Error: Unable to process image with one pixel height/width.")
+        exit(1)
+    }
+    
     if newWidth % 2 != 0 {
         newWidth -= 1
     }
@@ -452,8 +457,7 @@ if base_image_bool {
 // export subsampled RGB gain map in ARGB format
 // there are some compatibility issues
 // not recommended to use
-
-if !apple_gain_map && subsampling_bool {
+if !apple_gain_map && subsampling_bool && !monochrome_export{
 
     let tonemapped_sdrimage = generate_sdr_image()!
     let rgb_gain_map = lanczosResizeImage(getRGBGainMap(hdr_input: hdr_image,sdr_input: tonemapped_sdrimage, hdr_max: pic_headroom))
@@ -479,14 +483,14 @@ if !apple_gain_map && subsampling_bool {
 
     var dict: [CFString: Any] = [:]
     
-    let xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0)
+    let xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: true)
     let xmlData = xmlString.data(using: .utf8)
     
     let metaData = CGImageMetadataCreateFromXMPData(xmlData! as CFData)
     let metaDataDescription: Any? = [
         "PixelFormat": 32,
         "Width": String(tmp_width),
-        "Height": String(Int(tmp_height)),
+        "Height": String(tmp_height),
         "BytesPerRow": String(tmp_width*4)
       ]
     let metaDataInfo: Any? = CGColorSpace(name: sdr_color_space)!
@@ -497,6 +501,46 @@ if !apple_gain_map && subsampling_bool {
     dict[kCGImageAuxiliaryDataInfoData] = gainMapImageData
     
     let auxDict = dict as CFDictionary
+
+    let dest = CGImageDestinationCreateWithURL(
+        url_export_heic as CFURL,
+        UTType.heic.identifier as CFString,
+        1,
+        nil
+        )
+    
+    let context = CIContext(options: [CIContextOption.outputColorSpace:CGColorSpace(name: sdr_color_space)!])
+    
+    let baseCG = context.createCGImage(tonemapped_sdrimage, from: tonemapped_sdrimage.extent)
+    let properties = hdr_image.properties
+    
+    var export_options: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: imagequality ?? 0.85]
+    for (key, value) in properties {
+        export_options[key as CFString] = value
+    }
+    
+    CGImageDestinationAddImage(dest!, baseCG!, export_options as CFDictionary)
+    
+    CGImageDestinationAddAuxiliaryDataInfo(
+            dest!,
+            kCGImageAuxiliaryDataTypeISOGainMap,
+            auxDict
+        )
+    CGImageDestinationFinalize(dest!)
+    exit(0)
+}
+
+// export subsampled monochrome gain map in L8 format
+if !apple_gain_map && subsampling_bool && monochrome_export{
+    let tonemapped_sdrimage = generate_sdr_image()!
+    let hdr_image_halfsize = lanczosResizeImage(hdr_image)
+    let tonemapped_sdrimage_halfsize = hdr_image_halfsize.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":headroom_ratio,"inputTargetHeadroom":1.0])
+    
+    let heif_data = ctx.heifRepresentation(of: tonemapped_sdrimage_halfsize, format: CIFormat.ARGB8, colorSpace: CGColorSpace(name: sdr_color_space)!, options: [CIImageRepresentationOption.hdrImage:hdr_image_halfsize,CIImageRepresentationOption.hdrGainMapAsRGB:false])
+    
+    let cgimage_create = CGImageSourceCreateWithData(heif_data! as CFData, nil)
+    
+    let aux_data = CGImageSourceCopyAuxiliaryDataInfoAtIndex(cgimage_create!, 0, kCGImageAuxiliaryDataTypeISOGainMap)
 
     let dest = CGImageDestinationCreateWithURL(
         url_export_heic as CFURL,
@@ -522,11 +566,9 @@ if !apple_gain_map && subsampling_bool {
     CGImageDestinationAddAuxiliaryDataInfo(
             dest!,
             kCGImageAuxiliaryDataTypeISOGainMap,
-            auxDict
+            aux_data!
         )
     CGImageDestinationFinalize(dest!)
-    
-    
     exit(0)
 }
 

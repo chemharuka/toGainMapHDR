@@ -36,7 +36,6 @@ var base_image_bool : Bool = false
 var sdr_export: Bool = false
 var pq_export: Bool = false
 var hlg_export: Bool = false
-var jpg_export: Bool = false
 var eight_bit: Bool = false
 var ten_bit: Bool = false
 var subsampling_bool : Bool = false
@@ -137,8 +136,6 @@ while index < imageoptions.count {
         pq_export = true
     case "-h":
         hlg_export = true
-    case "-j":
-        jpg_export = true
     case "-m":
         monochrome_export = true
     case "-H":
@@ -213,10 +210,6 @@ if [pq_export, hlg_export, sdr_export, apple_gain_map, base_image_bool, monochro
     print("Error: Only one export format can be used.")
     exit(1)
 }
-if (jpg_export && hlg_export) || (jpg_export && pq_export) {
-    print("Error: Not support exporting JPEG with HLG or PQ transfer function.")
-    exit(1)
-}
 if tonemappingratio! < 1.0 {
     print("Error: The -r option requires a valid numeric value.")
     exit(1)
@@ -231,7 +224,6 @@ if max_headroom! < 1.0 {
 }
 
 if hlg_export && eight_bit {print("Warning: Suggested to use 10-bit with HLG.")}
-if jpg_export && ten_bit {print("Warning: Color depth will be 8 when exporting JPEG.")}
 if pq_export && eight_bit {print("Warning: Color depth will be 10 when exporting PQ HDR.")}
 if tonemappingratio_bool && base_image_bool {print("Warning: Base image specified, tone mapping ratio will not be applied.")}
 if tonemappingratio_bool && hlg_export {print("Warning: Tone mapping ratio will not be applied when exporting HLG HDR image.")}
@@ -405,24 +397,17 @@ func generate_sdr_image() -> CIImage?{
 while sdr_export{
     let tonemapped_sdrimage = generate_sdr_image()!
     let sdr_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85])
-    if jpg_export{
-        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage,
-                                         to: url_export_jpg,
-                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options:sdr_export_options as! [CIImageRepresentationOption : Any])
-    } else {
-        if ten_bit{
-            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
+    if ten_bit{
+        try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
                                                to: url_export_heic,
                                                colorSpace: CGColorSpace(name: sdr_color_space)!,
                                                options:sdr_export_options as! [CIImageRepresentationOption : Any])
-        } else {
-            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
+    } else {
+        try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
                                              to: url_export_heic,
                                              format: CIFormat.RGBA8,
                                              colorSpace: CGColorSpace(name: sdr_color_space)!,
                                              options:sdr_export_options as! [CIImageRepresentationOption : Any])
-        }
     }
     exit(0)
 }
@@ -432,76 +417,96 @@ if base_image_bool {
     let tonemapped_sdrimage = generate_sdr_image()!
     let rgb_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image,CIImageRepresentationOption.hdrGainMapAsRGB:true])
     
-    if jpg_export {
-        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage,
-                                         to: url_export_jpg,
+    if ten_bit {
+        try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
+                                           to: url_export_heic,
+                                           colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                           options: rgb_export_options as! [CIImageRepresentationOption : Any])
+    } else {
+        try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
+                                         to: url_export_heic,
+                                         format: CIFormat.RGBA8,
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options: rgb_export_options as! [CIImageRepresentationOption : Any])
+    }
+    exit(0)
+}
+
+// export subsampled RGB gain map by imageIO
+// there are some compatibility issues
+// not recommended to use
+if !apple_gain_map && subsampling_bool {
+
+    let tonemapped_sdrimage = generate_sdr_image()!
+    let rgb_gain_map = lanczosResizeImage(getRGBGainMap(hdr_input: hdr_image,sdr_input: tonemapped_sdrimage, hdr_max: pic_headroom))
+    
+    let tmp_height = Int(rgb_gain_map.extent.height)
+    let tmp_width = Int(rgb_gain_map.extent.width)
+
+    var gain_map_data_mono = Data(count: tmp_height * tmp_width)
+    var gain_map_data_rgb = Data(count: tmp_height * tmp_width * 4)
+    
+    var dict: [CFString: Any] = [:]
+    var xmlString: String
+    
+    if monochrome_export{
+        gain_map_data_mono.withUnsafeMutableBytes {
+            if let baseAddress = $0.baseAddress {
+                ctx.render(
+                    rgb_gain_map,
+                    toBitmap: baseAddress,
+                    rowBytes: tmp_width,
+                    bounds: rgb_gain_map.extent,
+                    format: CIFormat.L8,
+                    colorSpace: CGColorSpace(name: CGColorSpace.linearGray)!
+                )
+            }
+        }
+        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: false)
     } else {
-        if ten_bit {
-            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
-                                               to: url_export_heic,
-                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                               options: rgb_export_options as! [CIImageRepresentationOption : Any])
-        } else {
-            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
-                                             to: url_export_heic,
-                                             format: CIFormat.RGBA8,
-                                             colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                             options: rgb_export_options as! [CIImageRepresentationOption : Any])
+        gain_map_data_rgb.withUnsafeMutableBytes {
+            if let baseAddress = $0.baseAddress {
+                ctx.render(
+                    rgb_gain_map,
+                    toBitmap: baseAddress,
+                    rowBytes: tmp_width * 4,
+                    bounds: rgb_gain_map.extent,
+                    format: CIFormat.ARGB8,
+                    colorSpace: CGColorSpace(name: CGColorSpace.linearITUR_2020)!
+                )
+            }
         }
+        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: true)
     }
-    exit(0)
-}
-
-// export subsampled RGB gain map in ARGB format
-// there are some compatibility issues
-// not recommended to use
-if !apple_gain_map && subsampling_bool && !monochrome_export{
-
-    let tonemapped_sdrimage = generate_sdr_image()!
-    let rgb_gain_map = lanczosResizeImage(getRGBGainMap(hdr_input: hdr_image,sdr_input: tonemapped_sdrimage, hdr_max: pic_headroom))
     
-    let tmp_height = Int(rgb_gain_map.extent.height)
-    let tmp_width = Int(rgb_gain_map.extent.width)
-
-    
-    var gainMapImageData = Data(count: tmp_height * tmp_width * 4)
-                                       
-    gainMapImageData.withUnsafeMutableBytes {
-        if let baseAddress = $0.baseAddress {
-            ctx.render(
-                rgb_gain_map,
-                toBitmap: baseAddress,
-                rowBytes: tmp_width * 4,
-                bounds: rgb_gain_map.extent,
-                format: CIFormat.ARGB8,
-                colorSpace: CGColorSpace(name: CGColorSpace.linearITUR_2020)!
-            )
-        }
-    }
-
-    var dict: [CFString: Any] = [:]
-    
-    let xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: true)
     let xmlData = xmlString.data(using: .utf8)
-    
     let metaData = CGImageMetadataCreateFromXMPData(xmlData! as CFData)
-    let metaDataDescription: Any? = [
-        "PixelFormat": 32,
-        "Width": String(tmp_width),
-        "Height": String(tmp_height),
-        "BytesPerRow": String(tmp_width*4)
-      ]
     let metaDataInfo: Any? = CGColorSpace(name: sdr_color_space)!
+    var metaDataDescription: Any?
     
+    if monochrome_export{
+        metaDataDescription = [
+            "PixelFormat": 1278226488,
+            "Width": String(tmp_width),
+            "Height": String(tmp_height),
+            "BytesPerRow": String(tmp_width)
+          ]
+        dict[kCGImageAuxiliaryDataInfoData] = gain_map_data_mono
+    } else {
+        metaDataDescription = [
+            "PixelFormat": 32,
+            "Width": String(tmp_width),
+            "Height": String(tmp_height),
+            "BytesPerRow": String(tmp_width*4)
+          ]
+        dict[kCGImageAuxiliaryDataInfoData] = gain_map_data_rgb
+    }
     dict[kCGImageAuxiliaryDataInfoMetadata] = metaData
     dict[kCGImageAuxiliaryDataInfoDataDescription] = metaDataDescription
     dict[kCGImageAuxiliaryDataInfoColorSpace] = metaDataInfo
-    dict[kCGImageAuxiliaryDataInfoData] = gainMapImageData
+
     
     let auxDict = dict as CFDictionary
-
     let dest = CGImageDestinationCreateWithURL(
         url_export_heic as CFURL,
         UTType.heic.identifier as CFString,
@@ -511,7 +516,13 @@ if !apple_gain_map && subsampling_bool && !monochrome_export{
     
     let context = CIContext(options: [CIContextOption.outputColorSpace:CGColorSpace(name: sdr_color_space)!])
     
-    let baseCG = context.createCGImage(tonemapped_sdrimage, from: tonemapped_sdrimage.extent)
+    var baseCG : CGImage
+    if ten_bit {
+        baseCG = context.createCGImage(tonemapped_sdrimage, from: tonemapped_sdrimage.extent, format: CIFormat.RGB10, colorSpace: CGColorSpace(name: sdr_color_space)!)!
+    } else {
+        baseCG = context.createCGImage(tonemapped_sdrimage, from: tonemapped_sdrimage.extent)!
+    }
+    
     let properties = hdr_image.properties
     
     var export_options: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: imagequality ?? 0.85]
@@ -519,84 +530,7 @@ if !apple_gain_map && subsampling_bool && !monochrome_export{
         export_options[key as CFString] = value
     }
     
-    CGImageDestinationAddImage(dest!, baseCG!, export_options as CFDictionary)
-    
-    CGImageDestinationAddAuxiliaryDataInfo(
-            dest!,
-            kCGImageAuxiliaryDataTypeISOGainMap,
-            auxDict
-        )
-    CGImageDestinationFinalize(dest!)
-    exit(0)
-}
-
-// export subsampled monochrome gain map in L8 format
-// there are some compatibility issues
-// not recommended to use
-
-if !apple_gain_map && subsampling_bool && monochrome_export{
-
-    let tonemapped_sdrimage = generate_sdr_image()!
-    let rgb_gain_map = lanczosResizeImage(getRGBGainMap(hdr_input: hdr_image,sdr_input: tonemapped_sdrimage, hdr_max: pic_headroom))
-    
-    let tmp_height = Int(rgb_gain_map.extent.height)
-    let tmp_width = Int(rgb_gain_map.extent.width)
-    
-    
-    var gainMapImageData = Data(count: tmp_height * tmp_width)
-                                       
-    gainMapImageData.withUnsafeMutableBytes {
-        if let baseAddress = $0.baseAddress {
-            ctx.render(
-                rgb_gain_map,
-                toBitmap: baseAddress,
-                rowBytes: tmp_width,
-                bounds: rgb_gain_map.extent,
-                format: CIFormat.L8,
-                colorSpace: CGColorSpace(name: CGColorSpace.linearGray)!
-            )
-        }
-    }
-
-    var dict: [CFString: Any] = [:]
-    
-    let xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: false)
-    let xmlData = xmlString.data(using: .utf8)
-    
-    let metaData = CGImageMetadataCreateFromXMPData(xmlData! as CFData)
-    let metaDataDescription: Any? = [
-        "PixelFormat": 1278226488,
-        "Width": String(tmp_width),
-        "Height": String(tmp_height),
-        "BytesPerRow": String(tmp_width)
-      ]
-    let metaDataInfo: Any? = CGColorSpace(name: sdr_color_space)!
-    
-    dict[kCGImageAuxiliaryDataInfoMetadata] = metaData
-    dict[kCGImageAuxiliaryDataInfoDataDescription] = metaDataDescription
-    dict[kCGImageAuxiliaryDataInfoColorSpace] = metaDataInfo
-    dict[kCGImageAuxiliaryDataInfoData] = gainMapImageData
-    
-    let auxDict = dict as CFDictionary
-
-    let dest = CGImageDestinationCreateWithURL(
-        url_export_heic as CFURL,
-        UTType.heic.identifier as CFString,
-        1,
-        nil
-        )
-    
-    let context = CIContext(options: [CIContextOption.outputColorSpace:CGColorSpace(name: sdr_color_space)!])
-    
-    let baseCG = context.createCGImage(tonemapped_sdrimage, from: tonemapped_sdrimage.extent)
-    let properties = hdr_image.properties
-    
-    var export_options: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: imagequality ?? 0.85]
-    for (key, value) in properties {
-        export_options[key as CFString] = value
-    }
-    
-    CGImageDestinationAddImage(dest!, baseCG!, export_options as CFDictionary)
+    CGImageDestinationAddImage(dest!, baseCG, export_options as CFDictionary)
     
     CGImageDestinationAddAuxiliaryDataInfo(
             dest!,
@@ -617,24 +551,17 @@ if !apple_gain_map {
     } else {
         adaptive_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image,CIImageRepresentationOption.hdrGainMapAsRGB:true])
     }
-    if jpg_export {
-        try! ctx.writeJPEGRepresentation(of: tonemapped_sdrimage,
-                                         to: url_export_jpg,
+    if ten_bit {
+        try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
+                                           to: url_export_heic,
+                                           colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                           options: adaptive_export_options as! [CIImageRepresentationOption : Any])
+    } else {
+        try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
+                                         to: url_export_heic,
+                                         format: CIFormat.RGBA8,
                                          colorSpace: CGColorSpace(name: sdr_color_space)!,
                                          options: adaptive_export_options as! [CIImageRepresentationOption : Any])
-    } else {
-        if ten_bit {
-            try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
-                                               to: url_export_heic,
-                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                               options: adaptive_export_options as! [CIImageRepresentationOption : Any])
-        } else {
-            try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
-                                             to: url_export_heic,
-                                             format: CIFormat.RGBA8,
-                                             colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                             options: adaptive_export_options as! [CIImageRepresentationOption : Any])
-        }
     }
     exit(0)
 }
@@ -672,24 +599,17 @@ if apple_gain_map {
     let modifiedImage = tonemapped_sdrimage.settingProperties(imageProperties)
     
     let alt_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrGainMapImage:gain_map])
-    if jpg_export {
-        try! ctx.writeJPEGRepresentation(of: modifiedImage,
-                                         to: url_export_jpg,
-                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options:alt_export_options as! [CIImageRepresentationOption : Any])
+    if ten_bit {
+        try! ctx.writeHEIF10Representation(of: modifiedImage,
+                                           to: url_export_heic,
+                                           colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                           options: alt_export_options as! [CIImageRepresentationOption : Any])
     } else {
-        if ten_bit {
-            try! ctx.writeHEIF10Representation(of: modifiedImage,
-                                               to: url_export_heic,
-                                               colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                               options: alt_export_options as! [CIImageRepresentationOption : Any])
-        } else {
-            try! ctx.writeHEIFRepresentation(of: modifiedImage,
-                                             to: url_export_heic,
-                                             format: CIFormat.RGBA8,
-                                             colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                             options: alt_export_options as! [CIImageRepresentationOption : Any])
-        }
+        try! ctx.writeHEIFRepresentation(of: modifiedImage,
+                                         to: url_export_heic,
+                                         format: CIFormat.RGBA8,
+                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
+                                         options: alt_export_options as! [CIImageRepresentationOption : Any])
     }
     exit(0)
 }

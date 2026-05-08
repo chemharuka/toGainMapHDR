@@ -7,6 +7,7 @@ Include:
 1. toGainMapHDR, which convert png, tiff etc. HDR file to Adaptive HDR (gain map heic file) / ISO HDR (PQ or HLG curve image). The program will read a image as both SDR and HDR image, then calculate difference between two images as gain map.
 2. heic_hdr.py, a ChatGPT generated python script to convert all TIFF file to HEIC.
 3. GainMapKernel.ci.metallib, library needed to output Apple gain map.
+4. RGBGainMapKernel.ci.metallib, library needed to output ISO gain map.
 
 GUI program created by @vincenttsang [HDR-Gain-Map-Convert](https://github.com/vincenttsang/HDR-Gain-Map-Convert)
 
@@ -30,10 +31,10 @@ Supported input format:
 
 Supported output format: 
 
-* ISO Gain Map HDR in HEIC/JPG (default)
-* Apple Gain Map HDR in HEIC/JPG
+* ISO Gain Map HDR in HEIC (default)
+* Apple Gain Map HDR in HEIC
 * PQ/HLG HDR in HEIC
-* Tone mapped SDR in HEIC/JPG
+* Tone mapped SDR in HEIC
 
 Notes: 
 
@@ -94,25 +95,23 @@ default: output HDR-heic with ISO gain map in RGB
 
 -R: If `-R` is less than `-r` headroom, this value will be used for tone mapping. `-R` value will also limit headroom of Apple gain map.
 
--g: Apple gain map use monochrome L8 image with Rec709 like non-linear transformation.
+-g: Apple gain map use monochrome L8 image with Rec709 like non-linear transformation. (CIImage)
 
-default: Adaptive gain map created as a color ratio, and read as YUV420.
+default: Adaptive gain map created as a color ratio, and read as YUV420. (CIImage)
 
--m: Adaptive gain map created as a brightness ratio, and read as L8.
+-m: Adaptive gain map created as a brightness ratio, and read as L8. (CIImage)
 
 -H: Subsampling gain map to half size. If the width or length is not a multiple of 2, one row or column will be cropped.
 
--H only: Adaptive gain map created as a brightness ratio, and read as ARGB.
+-H only: Adaptive gain map created as a brightness ratio, and read as ARGB. (imageIO)
 
--H -m: Adaptive gain map created as a brightness ratio, and read as L8.
+-H -m: Adaptive gain map created as a brightness ratio, and read as L8. (imageIO)
 
--H -g: Apple gain map created as a brightness ratio, and read as L8 with Rec709 transformation.
+-H -g: Apple gain map created as a brightness ratio, and read as L8 with Rec709 transformation. (CIImage)
 
 ### Sample command：
 
  `./toGainMapHDR ~/Downloads/abc.png ~/Documents/ -q 0.95 -d 10 -c rec2020`
-
- `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -q 0.80 -j`
 
 convert gain map abc.avif to gain map heic file and keep base image:
 

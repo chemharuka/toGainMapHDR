@@ -12,7 +12,7 @@ import ImageIO
 import UniformTypeIdentifiers
 
 let ctx = CIContext()
-let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0)\n             ratio = 1.0: keep full highlight details\n             ratio >> 100: lose all highlight details\n         -R <value>: max headroom for tone mapping (default: 6)\n         -b <base_image>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 6)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H: subsampling gain map to half size\n         -s: export tone mapped SDR image\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
+let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0)\n             ratio = 1.0: keep full highlight details\n             ratio >> 100: lose all highlight details\n         -R <value>: max headroom for tone mapping (default: 6)\n         -b <file_path>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 6)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H: subsampling gain map to half size\n         -s: export tone mapped SDR image\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
 guard arguments.count > 2 else {
     print(help_info)
@@ -42,6 +42,7 @@ var subsampling_bool : Bool = false
 var apple_gain_map: Bool = false
 var hdr_image: CIImage
 var monochrome_export: Bool = false
+var is_cropped_bool : Bool = false
 
 let read_hdr_image = CIImage(contentsOf: url_hdr, options: [.expandToHDR: true])
 if read_hdr_image == nil {
@@ -206,7 +207,7 @@ let path_export = URL(fileURLWithPath: arguments[2])
 let url_export_heic = path_export.appendingPathComponent(filename!)
 let url_export_jpg = path_export.appendingPathComponent(filename_jpg!)
 
-if [pq_export, hlg_export, sdr_export, apple_gain_map, base_image_bool, monochrome_export].filter({$0}).count >= 2 {
+if [pq_export, hlg_export, sdr_export, apple_gain_map, monochrome_export].filter({$0}).count >= 2 {
     print("Error: Only one export format can be used.")
     exit(1)
 }
@@ -222,13 +223,21 @@ if max_headroom! < 1.0 {
     print("Error: The -R option requires a valid numeric value.")
     exit(1)
 }
+if base_image_bool && monochrome_export {
+    print("Warning: Base image specified, will use RGB gain map.")
+    monochrome_export = false
+}
+if base_image_bool && apple_gain_map {
+    print("Warning: Base image specified, will use RGB gain map.")
+    apple_gain_map = false
+}
 
 if hlg_export && eight_bit {print("Warning: Suggested to use 10-bit with HLG.")}
 if pq_export && eight_bit {print("Warning: Color depth will be 10 when exporting PQ HDR.")}
 if tonemappingratio_bool && base_image_bool {print("Warning: Base image specified, tone mapping ratio will not be applied.")}
 if tonemappingratio_bool && hlg_export {print("Warning: Tone mapping ratio will not be applied when exporting HLG HDR image.")}
 if tonemappingratio_bool && pq_export {print("Warning: Tone mapping ratio will not be applied when exporting PQ HDR image.")}
-if base_image_bool && monochrome_export {print("Warning: Base image specified, will use RGB gain map.")}
+
 
 
 // export hlg and pq hdr file
@@ -313,7 +322,6 @@ func maxLuminance(_ image: CIImage) -> Float? {
 
 func makeEvenSized(_ image: CIImage) -> CIImage {
     let extent = image.extent
-    
     var newWidth = Int(extent.width)
     var newHeight = Int(extent.height)
     
@@ -339,7 +347,10 @@ func makeEvenSized(_ image: CIImage) -> CIImage {
         width: CGFloat(newWidth),
         height: CGFloat(newHeight)
     )
-    print("Warning: Subsampling gain map requires even width/hight, cropped 1 pixel.")
+    if !is_cropped_bool {
+        print("Warning: Subsampling gain map requires even width/hight, cropped 1 pixel.")
+        is_cropped_bool = true
+    }
     return image.cropped(to: newRect)
 }
 
@@ -352,7 +363,8 @@ if subsampling_bool {
     hdr_image = makeEvenSized(hdr_image)
 }
 
-if base_image_bool == false {
+if base_image_bool && !subsampling_bool {}
+else {
     let transform = CGAffineTransform(scaleX: 1.0 / CGFloat(tonemappingratio!), y: 1.0 / CGFloat(tonemappingratio!))
     pic_headroom = maxLuminance(hdr_image)!
     pic_headroom2 = maxLuminance(hdr_image.transformed(by: transform))!
@@ -385,9 +397,17 @@ func generate_sdr_image() -> CIImage?{
             print("Warning: Could not load base image, will generate base image by tone mapping.")
             base_image_bool = false
             return hdr_image.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":headroom_ratio,"inputTargetHeadroom":1.0])
-        } else {
-            return CIImage(contentsOf: base_image_url!)
         }
+        var base_image_temp: CIImage
+        base_image_temp = CIImage(contentsOf: base_image_url!)!
+        if subsampling_bool {
+            base_image_temp = makeEvenSized(base_image_temp)
+        }
+        if base_image_temp.extent != hdr_image.extent{
+            print("Warning: Size of base image is different, will generate base image by tone mapping.")
+            return hdr_image.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":headroom_ratio,"inputTargetHeadroom":1.0])
+        }
+        return base_image_temp
     }
     return hdr_image.applyingFilter("CIToneMapHeadroom", parameters: ["inputSourceHeadroom":headroom_ratio,"inputTargetHeadroom":1.0])
 }
@@ -408,26 +428,6 @@ while sdr_export{
                                              format: CIFormat.RGBA8,
                                              colorSpace: CGColorSpace(name: sdr_color_space)!,
                                              options:sdr_export_options as! [CIImageRepresentationOption : Any])
-    }
-    exit(0)
-}
-
-// -b: export RGB gain map image with specified base image
-if base_image_bool {
-    let tonemapped_sdrimage = generate_sdr_image()!
-    let rgb_export_options = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imagequality ?? 0.85, CIImageRepresentationOption.hdrImage:hdr_image,CIImageRepresentationOption.hdrGainMapAsRGB:true])
-    
-    if ten_bit {
-        try! ctx.writeHEIF10Representation(of: tonemapped_sdrimage,
-                                           to: url_export_heic,
-                                           colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                           options: rgb_export_options as! [CIImageRepresentationOption : Any])
-    } else {
-        try! ctx.writeHEIFRepresentation(of: tonemapped_sdrimage,
-                                         to: url_export_heic,
-                                         format: CIFormat.RGBA8,
-                                         colorSpace: CGColorSpace(name: sdr_color_space)!,
-                                         options: rgb_export_options as! [CIImageRepresentationOption : Any])
     }
     exit(0)
 }
@@ -462,7 +462,7 @@ if !apple_gain_map && subsampling_bool {
                 )
             }
         }
-        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: false)
+        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: 1)
     } else {
         gain_map_data_rgb.withUnsafeMutableBytes {
             if let baseAddress = $0.baseAddress {
@@ -476,7 +476,7 @@ if !apple_gain_map && subsampling_bool {
                 )
             }
         }
-        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: true)
+        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: 2)
     }
     
     let xmlData = xmlString.data(using: .utf8)
@@ -505,7 +505,6 @@ if !apple_gain_map && subsampling_bool {
     dict[kCGImageAuxiliaryDataInfoDataDescription] = metaDataDescription
     dict[kCGImageAuxiliaryDataInfoColorSpace] = metaDataInfo
 
-    
     let auxDict = dict as CFDictionary
     let dest = CGImageDestinationCreateWithURL(
         url_export_heic as CFURL,
@@ -531,13 +530,14 @@ if !apple_gain_map && subsampling_bool {
     }
     
     CGImageDestinationAddImage(dest!, baseCG, export_options as CFDictionary)
-    
     CGImageDestinationAddAuxiliaryDataInfo(
             dest!,
             kCGImageAuxiliaryDataTypeISOGainMap,
             auxDict
         )
+    
     CGImageDestinationFinalize(dest!)
+    
     exit(0)
 }
 

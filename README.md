@@ -91,7 +91,7 @@ default: output HDR-heic with ISO gain map in RGB
 
 #### Notes for options
 
--r: Reduce the picture by `-r` times, and then measure the maximum brightness at this time as the headroom, this headroom will be used for tone mapping.
+-r: Reduce the picture by `-r` times, and then measure the maximum brightness at this time as the headroom, this headroom will be used for tone mapping. Recommand value for monochrome gain map is 3.0, and 10.0 for RGB gain map.
 
 -R: If `-R` is less than `-r` headroom, this value will be used for tone mapping. `-R` value will also limit headroom of Apple gain map.
 

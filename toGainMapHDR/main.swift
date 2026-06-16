@@ -462,7 +462,7 @@ if !apple_gain_map && subsampling_bool {
                 )
             }
         }
-        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: 1)
+        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: 2)
     } else {
         gain_map_data_rgb.withUnsafeMutableBytes {
             if let baseAddress = $0.baseAddress {
@@ -476,7 +476,7 @@ if !apple_gain_map && subsampling_bool {
                 )
             }
         }
-        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: 2)
+        xmlString = defaultHDRMetadata(GainMapMax: log2(pic_headroom),GainMapMin: 0.0, RGBType: 1)
     }
     
     let xmlData = xmlString.data(using: .utf8)

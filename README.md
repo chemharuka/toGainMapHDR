@@ -97,13 +97,13 @@ default: output HDR-heic with ISO gain map in RGB
 
 -g: Apple gain map use monochrome L8 image with Rec709 like non-linear transformation. (CIImage)
 
-default: Adaptive gain map created as a color ratio, and read as YUV420. (CIImage)
+default: Adaptive gain map created as a color (RGB) ratio, and read as YUV420. (CIImage)
 
 -m: Adaptive gain map created as a brightness ratio, and read as L8. (CIImage)
 
 -H: Subsampling gain map to half size. If the width or length is not a multiple of 2, one row or column will be cropped.
 
--H only: Adaptive gain map created as a brightness ratio, and read as ARGB. (imageIO)
+-H only: Adaptive gain map created as a color (RGB) ratio, and read as ARGB. (imageIO)
 
 -H -m: Adaptive gain map created as a brightness ratio, and read as L8. (imageIO)
 

@@ -40,7 +40,9 @@ Notes:
 
 1. Some formats have width/height limitation, only support the image file which could be openned by preview.app
 
-2. CIImage cannot handle the brightness of Apple gain map HDR correctly, not recommended to input in this format.
+2. CIImage cannot handle the brightness of Apple gain map HDR correctly, not recommended to input in this format
+
+3. Do not use zip-compressed TIFF as input, as this will significantly slow down the processing speed
 
 #### System Require
 

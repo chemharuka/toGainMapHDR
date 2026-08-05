@@ -11,6 +11,7 @@ import CoreImage.CIFilterBuiltins
 import ImageIO
 import UniformTypeIdentifiers
 
+
 let ctx = CIContext()
 let help_info = "Usage: toGainMapHDR <source file> <destination folder> <options>\n       default: output HDR-heic with ISO gain map in RGB\n       options:\n         -q <value>: image quality (default: 0.85)\n         -r <value>: SDR tone mapping ratio (≥ 1.0, default: 3.0)\n             ratio = 1.0: keep full highlight details\n             ratio >> 100: lose all highlight details\n         -R <value>: max headroom for tone mapping (default: 6)\n         -b <file_path>: specify base image\n         -t <text>: add extra text after the output file name\n         -c <color space>: specify output color space (srgb, p3, rec2020)\n         -d <color depth>: specify output color depth (default: 6)\n         -g: output Apple gain map HDR\n         -m: export ISO Gain Map HDR in monochrome\n         -H: subsampling gain map to half size\n         -s: export tone mapped SDR image\n         -p: export 10bit PQ HDR heic image\n         -h: export HLG HDR heic image (default in 10bit)\n         -j : export image in JPEG format\n         -help: print help information"
 let arguments = CommandLine.arguments
@@ -366,6 +367,7 @@ if subsampling_bool {
 if base_image_bool && !subsampling_bool {}
 else {
     let transform = CGAffineTransform(scaleX: 1.0 / CGFloat(tonemappingratio!), y: 1.0 / CGFloat(tonemappingratio!))
+
     pic_headroom = maxLuminance(hdr_image)!
     pic_headroom2 = maxLuminance(hdr_image.transformed(by: transform))!
 
@@ -513,7 +515,7 @@ if !apple_gain_map && subsampling_bool {
         nil
         )
     
-    let context = CIContext(options: [CIContextOption.outputColorSpace:CGColorSpace(name: sdr_color_space)!])
+    let context = CIContext(options: [.outputColorSpace:CGColorSpace(name: sdr_color_space)!])
     
     var baseCG : CGImage
     if ten_bit {
@@ -537,7 +539,6 @@ if !apple_gain_map && subsampling_bool {
         )
     
     CGImageDestinationFinalize(dest!)
-    
     exit(0)
 }
 
@@ -614,15 +615,5 @@ if apple_gain_map {
     exit(0)
 }
 
-
-//let filename2 = url_hdr.deletingPathExtension().appendingPathExtension("png").lastPathComponent
-//let url_export_heic2 = path_export.appendingPathComponent(filename2)
-//try! ctx.writePNGRepresentation(of: sdr_image!, to: url_export_heic2, format: CIFormat.RGBA8, colorSpace:CGColorSpace(name: CGColorSpace.displayP3)!)
 exit(20)
-// debug
-//let filename2 = url_hdr.deletingPathExtension().appendingPathExtension("png").lastPathComponent
-//let url_export_heic2 = path_export.appendingPathComponent(filename2)
-//try! ctx.writePNGRepresentation(of: gainmap!, to: url_export_heic2, format: CIFormat.RGBA8, colorSpace:CGColorSpace(name: CGColorSpace.displayP3)!)
-
-
 

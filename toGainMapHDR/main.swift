@@ -134,11 +134,11 @@ Usage: toGainMapHDR <source file> <destination folder> <options>
          -c <color space>: specify output color space (srgb, p3, rec2020)
          -d <color depth>: specify output color depth (default: 8)
          -g: output Apple gain map HDR
-         -m: export ISO Gain Map HDR in monochrome
+         -m: output HDR-heic with ISO gain map in monochrome
          -H: subsampling gain map to half size
-         -s: export tone mapped SDR image
-         -p: export 10 bit PQ HDR heic image
-         -h: export HLG HDR heic image (default in 10bit)
+         -s: output tone mapped SDR image
+         -p: output 10 bit PQ HDR heic image
+         -h: output HLG HDR heic image (default in 10bit)
          -help: print help information
 """
 

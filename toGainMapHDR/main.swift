@@ -582,7 +582,7 @@ func exportSubsampledGainMap(hdrImage: CIImage, sdrImage: CIImage, config: Confi
 
 // MARK: - Main processing pipeline
 
-func process(_ config: Configuration) {
+func process(_ config: inout Configuration) {
     // Load HDR image
     guard let hdrImage = CIImage(contentsOf: config.sourceURL, options: [.expandToHDR: true]) else {
         print("Error: No input image found.")
@@ -590,17 +590,16 @@ func process(_ config: Configuration) {
     }
     
     // Infer output color spaces from the input only when -c was not specified.
-    var mutableConfig = config
-    if !mutableConfig.hasExplicitOutputColorSpace {
+    if !config.hasExplicitOutputColorSpace {
         let imageColorSpaceStr = String(describing: hdrImage.colorSpace)
         if imageColorSpaceStr.contains("709") || imageColorSpaceStr.contains("sRGB") {
-            mutableConfig.sdrColorSpace = CGColorSpace(name: CGColorSpace.itur_709)!
-            mutableConfig.hdrColorSpace = CGColorSpace(name: CGColorSpace.itur_709_PQ)!
-            mutableConfig.hlgColorSpace = CGColorSpace(name: CGColorSpace.itur_709_HLG)!
+            config.sdrColorSpace = CGColorSpace(name: CGColorSpace.itur_709)!
+            config.hdrColorSpace = CGColorSpace(name: CGColorSpace.itur_709_PQ)!
+            config.hlgColorSpace = CGColorSpace(name: CGColorSpace.itur_709_HLG)!
         } else if imageColorSpaceStr.contains("2100") || imageColorSpaceStr.contains("2020") {
-            mutableConfig.sdrColorSpace = CGColorSpace(name: CGColorSpace.itur_2020_sRGBGamma)!
-            mutableConfig.hdrColorSpace = CGColorSpace(name: CGColorSpace.itur_2100_PQ)!
-            mutableConfig.hlgColorSpace = CGColorSpace(name: CGColorSpace.itur_2100_HLG)!
+            config.sdrColorSpace = CGColorSpace(name: CGColorSpace.itur_2020_sRGBGamma)!
+            config.hdrColorSpace = CGColorSpace(name: CGColorSpace.itur_2100_PQ)!
+            config.hlgColorSpace = CGColorSpace(name: CGColorSpace.itur_2100_HLG)!
         }
     }
     
@@ -613,51 +612,51 @@ func process(_ config: Configuration) {
     
     // HLG / PQ shortcuts
     if config.exportHLG {
-        exportHLG(hdrImage, config: mutableConfig, destination: destinationURL)
+        exportHLG(hdrImage, config: config, destination: destinationURL)
         exit(0)
     }
     if config.exportPQ {
-        exportPQ(hdrImage, config: mutableConfig, destination: destinationURL)
+        exportPQ(hdrImage, config: config, destination: destinationURL)
         exit(0)
     }
     
     // Prepare HDR image and compute headroom
     var hdrImageMutable = hdrImage
-    let (picHeadroom, headroomRatio) = prepareHDRImage(config: &mutableConfig,
+    let (picHeadroom, headroomRatio) = prepareHDRImage(config: &config,
                                                        hdrImage: &hdrImageMutable)
     
     // Generate SDR base image
     guard let sdrImage = generateSDRImage(hdrImage: hdrImageMutable,
-                                          config: mutableConfig,
+                                          config: config,
                                           headroomRatio: headroomRatio) else {
         print("Error: Could not create SDR base image.")
         exit(1)
     }
     
     // SDR export
-    if mutableConfig.exportSDR {
-        exportSDR(sdrImage, config: mutableConfig, destination: destinationURL)
+    if config.exportSDR {
+        exportSDR(sdrImage, config: config, destination: destinationURL)
         exit(0)
     }
     
     // Apple gain map
     if config.exportAppleGainMap {
         exportAppleGainMap(hdrImage: hdrImageMutable, sdrImage: sdrImage,
-                           config: mutableConfig, destination: destinationURL)
+                           config: config, destination: destinationURL)
         exit(0)
     }
     
     // Subsampled (non‑Apple) gain map
     if !config.exportAppleGainMap && config.subsampleGainMap {
         exportSubsampledGainMap(hdrImage: hdrImageMutable, sdrImage: sdrImage,
-                                config: mutableConfig, destination: destinationURL,
+                                config: config, destination: destinationURL,
                                 picHeadroom: picHeadroom)
         exit(0)
     }
     
     // Default: YUV gain map (ISO gain map via CIImage)
     exportISOYUVGainMap(sdrImage: sdrImage, hdrImage: hdrImageMutable,
-                        config: mutableConfig, destination: destinationURL)
+                        config: config, destination: destinationURL)
     exit(0)
 }
 
@@ -666,4 +665,4 @@ func process(_ config: Configuration) {
 let args = CommandLine.arguments
 var config = parseArguments(args)
 validateConfiguration(&config)
-process(config)
+process(&config)

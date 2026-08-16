@@ -100,6 +100,7 @@ struct Configuration {
     
     var useToneMappingRatio: Bool = false
     var useBaseImage: Bool = false
+    var hasExplicitOutputColorSpace: Bool = false
     
     var exportSDR: Bool = false
     var exportPQ: Bool = false
@@ -262,6 +263,7 @@ func parseArguments(_ args: [String]) -> Configuration {
                 print("Error: The -c option requires color space argument. (srgb, p3, rec2020)")
                 exit(1)
             }
+            config.hasExplicitOutputColorSpace = true
             index += 1
         case "-help":
             print(helpInfo)
@@ -587,17 +589,19 @@ func process(_ config: Configuration) {
         exit(1)
     }
     
-    // Determine color spaces from the image if not already forced
+    // Infer output color spaces from the input only when -c was not specified.
     var mutableConfig = config
-    let imageColorSpaceStr = String(describing: hdrImage.colorSpace)
-    if imageColorSpaceStr.contains("709") || imageColorSpaceStr.contains("sRGB") {
-        mutableConfig.sdrColorSpace = CGColorSpace(name: CGColorSpace.itur_709)!
-        mutableConfig.hdrColorSpace = CGColorSpace(name: CGColorSpace.itur_709_PQ)!
-        mutableConfig.hlgColorSpace = CGColorSpace(name: CGColorSpace.itur_709_HLG)!
-    } else if imageColorSpaceStr.contains("2100") || imageColorSpaceStr.contains("2020") {
-        mutableConfig.sdrColorSpace = CGColorSpace(name: CGColorSpace.itur_2020_sRGBGamma)!
-        mutableConfig.hdrColorSpace = CGColorSpace(name: CGColorSpace.itur_2100_PQ)!
-        mutableConfig.hlgColorSpace = CGColorSpace(name: CGColorSpace.itur_2100_HLG)!
+    if !mutableConfig.hasExplicitOutputColorSpace {
+        let imageColorSpaceStr = String(describing: hdrImage.colorSpace)
+        if imageColorSpaceStr.contains("709") || imageColorSpaceStr.contains("sRGB") {
+            mutableConfig.sdrColorSpace = CGColorSpace(name: CGColorSpace.itur_709)!
+            mutableConfig.hdrColorSpace = CGColorSpace(name: CGColorSpace.itur_709_PQ)!
+            mutableConfig.hlgColorSpace = CGColorSpace(name: CGColorSpace.itur_709_HLG)!
+        } else if imageColorSpaceStr.contains("2100") || imageColorSpaceStr.contains("2020") {
+            mutableConfig.sdrColorSpace = CGColorSpace(name: CGColorSpace.itur_2020_sRGBGamma)!
+            mutableConfig.hdrColorSpace = CGColorSpace(name: CGColorSpace.itur_2100_PQ)!
+            mutableConfig.hlgColorSpace = CGColorSpace(name: CGColorSpace.itur_2100_HLG)!
+        }
     }
     
     // Build output filename
@@ -631,7 +635,7 @@ func process(_ config: Configuration) {
     }
     
     // SDR export
-    if config.exportSDR {
+    if mutableConfig.exportSDR {
         exportSDR(sdrImage, config: mutableConfig, destination: destinationURL)
         exit(0)
     }

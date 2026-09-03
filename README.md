@@ -1,10 +1,12 @@
 # Convert HDR files to Gain Map HDR
 
+[中文](README.zh-CN.md)
+
 A macOS tool for converting HDR files to Adaptive (Gain Map) HDR / ISO HDR.
 
-Include:
+Includes:
 
-1. toGainMapHDR, which convert png, tiff etc. HDR file to Adaptive HDR (gain map heic file) / ISO HDR (PQ or HLG curve image). The program will read a image as both SDR and HDR image, then calculate difference between two images as gain map.
+1. toGainMapHDR, which converts png, tiff etc. HDR files to Adaptive HDR (gain map heic file) / ISO HDR (PQ or HLG curve image). The program will read an image as both SDR and HDR image, then calculate difference between the two images as gain map.
 2. heic_hdr.py, a ChatGPT generated python script to convert all TIFF file to HEIC.
 3. GainMapKernel.ci.metallib, library needed to output Apple gain map.
 4. RGBGainMapKernel.ci.metallib, library needed to output ISO gain map.
@@ -38,13 +40,13 @@ Supported output format:
 
 Notes: 
 
-1. Some formats have width/height limitation, only support the image file which could be openned by preview.app
+1. Some formats have width/height limitation, only support the image file which could be opened by Preview.app
 
 2. CIImage cannot handle the brightness of Apple gain map HDR correctly, not recommended to input in this format
 
 3. Do not use zip-compressed TIFF as input, as this will significantly slow down the processing speed
 
-#### System Require
+#### System Requirements
 
 Require macOS 26.0+. Fully tested on Apple Silicon.
 
@@ -93,7 +95,7 @@ default: output HDR-heic with ISO gain map in RGB
 
 #### Notes for options
 
--r: Reduce the picture by `-r` times, and then measure the maximum brightness at this time as the headroom, this headroom will be used for tone mapping. Recommand value for monochrome gain map is 3.0, and 10.0 for RGB gain map.
+-r: Reduce the picture by `-r` times, and then measure the maximum brightness at this time as the headroom, this headroom will be used for tone mapping. Recommended value for monochrome gain map is 3.0, and 10.0 for RGB gain map.
 
 -R: If `-R` is less than `-r` headroom, this value will be used for tone mapping. `-R` value will also limit headroom of Apple gain map.
 
@@ -115,13 +117,13 @@ default: Adaptive gain map created as a color (RGB) ratio, and read as YUV420. (
 
  `./toGainMapHDR ~/Downloads/abc.png ~/Documents/ -q 0.95 -d 10 -c rec2020`
 
-convert gain map abc.avif to gain map heic file and keep base image:
+Using an existing gain map HDR as input and keep its embedded base image (no re-tone-mapping):
 
- `./toGainMapHDR ~/Downloads/abc.avif ~/Documents/ -b ./Downloads/abc.avif` 
+ `./toGainMapHDR ~/Downloads/abc.avif ~/Documents/ -b ~/Downloads/abc.avif` 
 
 convert abc.tiff to Apple HDR by CIFilter and subsample gain map to half size:
 
- `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g -H 2` 
+ `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -g -H` 
 
 convert abc.tiff to HLG HDR file:
 
@@ -151,7 +153,7 @@ Batch convert all tiff files in a folder by heic_hdr.py:
 
 `chmod 711 ./toGainMapHDR`
 
-2. run heic_hdr.py (default run with 8 threads, change it accroding to your chip's performance cores.)
+2. run heic_hdr.py (default run with 8 threads, change it according to your chip's performance cores.)
 
 `python3 ./heic_hdr.py $folder_for_convert $options`
 
@@ -169,7 +171,7 @@ You may need to change the **DIR** of toGainMapHDR in heic_hdr.py before running
 
 Sample Apple Gain Map HDR files: (options: -g, ONLY this format supported by Edge Browser on macOS)
 
-Sample 1: (Wu-kung Mountains as UNSECO Geopark, Jiangxi, China)
+Sample 1: (Wu-kung Mountains as UNESCO Geopark, Jiangxi, China)
 ![DJI_1_0616_D](https://github.com/user-attachments/assets/d4fd48bb-6561-496f-b1ab-083ee1ae8a95)
 
 Sample 2: (Sanqing Mountain as World Heritage, Jiangxi, China)
@@ -190,7 +192,7 @@ Input image: Half Dome sunset, 16-bit TIFF, 4000x6000 px, 144 MB.
 | -h (HLG 10 bit)                    | -       | 7.4 MB  |         | ≈44.82  |
 | -s (SDR image)                     | 7.5 MB  | 3.9 MB  | 27.94   | 27.83   |
 | -g (Apple HDR)                     | 11.1 MB | 6.5 MB  | 40.83   | ≈39.47  |
-| -g -H 2.0 (with subsample)         | 8.4 MB  | 4.6 MB  | 40.66   | ≈39.27  |
+| -g -H (with subsample)             | 8.4 MB  | 4.6 MB  | 40.66   | ≈39.27  |
 | -g -d 10 (Apple HDR in 10 bit)     | -       | 11.0 MB |         | ≈42.38  |
 | default (ISO Gain Map HDR)         | 11.5 MB | 7.4 MB  | 43.03   | 41.43   |
 | -d 10 (ISO Gain Map HDR in 10 bit) | -       | 11.9 MB |         | 46.08   |

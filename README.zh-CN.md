@@ -56,7 +56,7 @@ Intel Mac 存在一些问题，并非所有功能都可用。
 
 默认：输出带 ISO gain map（RGB）的 HDR-heic
 
-- -q \<value\>：图像质量（默认：0.85）
+- -q \<value\>：图像质量（默认：0.85）。可传 0~1（如 0.85）或 0~100（如 85），大于 1 的值自动视为百分比
 - -r \<value\>：SDR 色调映射比率（≥1.0，默认：3.0）
 
     ratio = 1.0：保留全部高光细节
@@ -206,7 +206,7 @@ Apple Gain Map HDR 示例文件：（选项：-g，macOS 上只有该格式被 E
 | quality0.8    45.33 dB                                       | quality1.0    50.31 dB                                       |                                                              |
 | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
-jpg SDR 导出的 SDR 映射比率：（-s -j -r 1.0~50.0）
+SDR 导出的 SDR 映射比率：（-s -r 1.0~50.0）
 
 | ratio1.0                                                     | ratio2.0                                                     | ratio3.0                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -214,7 +214,7 @@ jpg SDR 导出的 SDR 映射比率：（-s -j -r 1.0~50.0）
 | ratio6.0                                                     | ratio20.0                                                     | ratio50.0                                                     |
 | ![DJI_air3_2250_D6 0](https://github.com/user-attachments/assets/b9feda17-9e05-4787-aa1d-f0fb68ab5966) | ![DJI_air3_2250_D20 0](https://github.com/user-attachments/assets/93ab6610-1a69-4074-be8f-f9651552dbd3) | ![DJI_air3_2250_D50 0](https://github.com/user-attachments/assets/967d2a61-6d74-446e-8dbe-655e3614bd60) |
 
-HDR 导出：（-j -r 1.0~50.0）。macOS 上的 Edge.app 不支持 RGB HDR，请在 Safari.app 中查看 HDR 效果。
+HDR 导出：（-r 1.0~50.0）。macOS 上的 Edge.app 不支持 RGB HDR，请在 Safari.app 中查看 HDR 效果。
 
 | ratio1.0 | ratio2.0  | ratio3.0 |
 | -------- | --------- | -------- |

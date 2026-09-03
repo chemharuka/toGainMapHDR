@@ -60,7 +60,7 @@ PLEASE UPGRADE your system to LATEST version for more compatibility.
 
 default: output HDR-heic with ISO gain map in RGB
 
--q \<value>: image quality (default: 0.85)
+-q \<value>: image quality (default: 0.85). Accepts either 0–1 (e.g. 0.85) or 0–100 (e.g. 85); values above 1 are treated as a percentage
 
 -r \<value>: SDR tone mapping ratio (≥1.0, default: 3.0)
 
@@ -222,7 +222,7 @@ Quality for 8 bit heic SDR export: (-s -q 0.2~1.0)
 | quality0.8    45.33 dB                                       | quality1.0    50.31 dB                                       |                                                              |
 | ![test-q=0 8](https://github.com/user-attachments/assets/e0a5813c-c812-413c-b3bc-a395f737e92b) | ![test-q=1.0](https://github.com/user-attachments/assets/a706bc60-8ef3-48bc-a878-6aa5f1be384b) |                                                              |
 
-SDR mapping ratio for jpg SDR export: (-s -j -r 1.0~50.0)
+SDR mapping ratio for SDR export: (-s -r 1.0~50.0)
 
 | ratio1.0                                                     | ratio2.0                                                     | ratio3.0                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -230,7 +230,7 @@ SDR mapping ratio for jpg SDR export: (-s -j -r 1.0~50.0)
 | ratio6.0                                                     | ratio20.0                                                     | ratio50.0                                                     |
 | ![DJI_air3_2250_D6 0](https://github.com/user-attachments/assets/b9feda17-9e05-4787-aa1d-f0fb68ab5966) | ![DJI_air3_2250_D20 0](https://github.com/user-attachments/assets/93ab6610-1a69-4074-be8f-f9651552dbd3) | ![DJI_air3_2250_D50 0](https://github.com/user-attachments/assets/967d2a61-6d74-446e-8dbe-655e3614bd60) |
 
-HDR export: (-j -r 1.0~50.0). Edge.app on macOS not support RGB HDR, view HDR effect on Safari.app.
+HDR export: (-r 1.0~50.0). Edge.app on macOS not support RGB HDR, view HDR effect on Safari.app.
 
 | ratio1.0 | ratio2.0  | ratio3.0 |
 | -------- | --------- | -------- |

@@ -15,6 +15,41 @@ GUI program created by @vincenttsang [HDR-Gain-Map-Convert](https://github.com/v
 
 Lightroom Plugin created by @fengshenx [LR_GainMap_HDR_Export_Plugin](https://github.com/fengshenx/LR_GainMap_HDR_Export_Plugin)
 
+## How it works
+
+The conversion pipeline is:
+
+1. **Read the HDR source.** The input (TIFF, PNG, AVIF, EXR, HEIF, …) is decoded into
+   a high-dynamic-range `CIImage` so highlight values above 1.0 are preserved.
+
+2. **Choose the output color space.** If not forced with `-c`, the SDR/PQ/HLG color
+   spaces are inferred from the color space of the source image (Rec.709 / sRGB,
+   Rec.2100, or P3).
+
+3. **Measure the picture headroom.** Measure the peak brightness, then downscale by
+   `-r` and measure again. Downscaling averages out isolated bright pixels, so the
+   exposure is not crushed for a few extreme highlights. If the image is effectively
+   SDR (peak brightness < 1.05), the tool warns and exports an SDR image instead.
+   `-R` caps this headroom.
+
+4. **Build the SDR base image.** If a base image is supplied with `-b`, it is reused
+   directly (as long as its size matches). Otherwise the HDR image is tone-mapped down
+   to SDR using the measured headroom.
+
+5. **Compute the gain map** as the ratio between the HDR image and the SDR base:
+   - *default / ISO gain map:* a per-channel (RGB) ratio gain map, stored as YUV420.
+   - *`-m`:* a monochrome gain map using the luminance (brightness) ratio only, stored
+     as a single L8 channel.
+   - *`-g` (Apple):* a monochrome gain map whose luminance ratio goes through a
+     Rec.709-like gamma curve; Apple's own tone-map parameters are written to the
+     image's MakerNote dictionary.
+
+6. **Write the HEIC file** with the SDR base image and the gain map attached as
+   auxiliary (ISO gain map) data. A viewer that understands gain maps reconstructs the
+   HDR; any other viewer shows the SDR base.
+
+With `-H`, the gain map is downscaled to half size before being embedded.
+
 ## Usage
 
 ### toGainMapHDR

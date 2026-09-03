@@ -13,6 +13,32 @@ GUI 程序由 @vincenttsang 开发：[HDR-Gain-Map-Convert](https://github.com/v
 
 Lightroom 插件由 @fengshenx 开发：[LR_GainMap_HDR_Export_Plugin](https://github.com/fengshenx/LR_GainMap_HDR_Export_Plugin)
 
+## 工作原理
+
+1. **读取 HDR 源图**。将输入（TIFF、PNG、AVIF、EXR、HEIF 等）解码为高动态范围的
+   `CIImage`，使大于 1.0 的高光值得以保留。
+
+2. **选择输出色彩空间**。若未用 `-c` 指定，则根据源图的色彩空间推断 SDR/PQ/HLG
+   对应的色彩空间（Rec.709 / sRGB、Rec.2100 或 P3）。
+
+3. **测量画面 headroom**。先测整图峰值亮度；再按 `-r` 缩小图像后测其峰值。
+   缩小使孤立极亮像素被平均化，避免为极少数高亮像素过度压低整体曝光。若图像本身
+   基本是 SDR（峰值亮度 < 1.05），则提示并改为导出 SDR 图像。`-R` 限制 headroom。
+
+4. **生成 SDR base 图**。若用 `-b` 指定了 base 图，且尺寸匹配，则直接复用；
+   否则用测得的 headroom 将 HDR 图 tone-map 成 SDR。
+
+5. **计算 gain map**，即 HDR 图与 SDR base 图的比值：
+   - *默认 / ISO gain map：*逐通道（RGB）的比值 gain map，按 YUV420 存储。
+   - *`-m`：*仅使用亮度比值的单色 gain map，按单个 L8 通道存储。
+   - *`-g`（Apple）：*单色 gain map，其亮度比值经过 Rec.709 类 gamma 曲线；
+     Apple 的色调映射参数会写入图像的 MakerNote 字典。
+
+6. **写出 HEIC 文件**，把 SDR base 图与 gain map 一起作为辅助（ISO gain map）
+   数据嵌入。支持 gain map 的查看器会据此重建 HDR；其余查看器直接显示 SDR base。
+
+使用 `-H` 时，gain map 会先缩小为一半尺寸再嵌入。
+
 ## 使用方法
 
 ### toGainMapHDR

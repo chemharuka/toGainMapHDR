@@ -36,6 +36,7 @@ Usage: toGainMapHDR <source file> <destination folder> <options>
 """
 
 let arguments = CommandLine.arguments
+
 guard arguments.count > 2 else {
     print(helpInfo)
     exit(2)
@@ -47,6 +48,7 @@ var filename = hdrURL.deletingPathExtension().appendingPathExtension("heic").las
 let imageOptions = arguments.dropFirst(3)
 var baseImageURL : URL?
 
+// Defaults (overridden by flags when present)
 var imageQuality: Double = 0.85
 var toneMappingRatio: Float = 3.0
 var maxHeadroom: Float = 6.0
@@ -63,6 +65,8 @@ var hdrImage: CIImage
 var monochromeExport: Bool = false
 var isCropped : Bool = false
 
+// MARK: - Load source image & infer color space
+
 let readHDRImage = CIImage(contentsOf: hdrURL, options: [.expandToHDR: true])
 if readHDRImage == nil {
     print("Error: No input image found.")
@@ -75,6 +79,7 @@ var sdrColorSpace = CGColorSpace.displayP3
 var hdrColorSpace = CGColorSpace.displayP3_PQ
 var hlgColorSpace = CGColorSpace.displayP3_HLG
 
+// Match the source's color-space family (each pairs an SDR, PQ and HLG space)
 let imageColorSpace = String(describing: hdrImage.colorSpace)
 if imageColorSpace.contains("709") {
     sdrColorSpace = CGColorSpace.itur_709
@@ -97,6 +102,8 @@ if imageColorSpace.contains("2020") {
     hlgColorSpace = CGColorSpace.itur_2100_HLG
 }
 
+// MARK: - Parse flags
+
 var index: Int = 0
 while index < imageOptions.count {
     let option = arguments[index+3]
@@ -107,6 +114,7 @@ while index < imageOptions.count {
             exit(4)
         }
         if let value = Double(arguments[index + 4]) {
+            // Failsafe: values above 1 are treated as a percentage (e.g. 85 == 0.85)
             if value > 1 {
                 imageQuality = value/100
             } else {
@@ -222,6 +230,8 @@ while index < imageOptions.count {
 }
 
 
+// MARK: - Output path & option validation
+
 let exportPath = URL(fileURLWithPath: arguments[2])
 let heicExportURL = exportPath.appendingPathComponent(filename)
 
@@ -258,7 +268,8 @@ if toneMappingRatioBool && pqExport {print("Warning: Tone mapping ratio will not
 
 
 
-// export hlg and pq hdr file
+// MARK: - HLG / PQ export
+
 if hlgExport {
     let hlgExportOptions = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imageQuality])
     if eightBit {
@@ -278,6 +289,7 @@ if hlgExport {
 
 if pqExport {
     let pqExportOptions = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imageQuality])
+    // PQ is always exported in 10-bit
     try! ctx.writeHEIF10Representation(of: hdrImage,
                                        to: heicExportURL,
                                        colorSpace: CGColorSpace(name: hdrColorSpace)!,
@@ -286,8 +298,11 @@ if pqExport {
 }
 
 
-// Custom filter
+// MARK: - Custom gain-map filters
 
+// Runs the GainMap kernel (monochrome luminance gain map, used for Apple gain map).
+// The kernel computes the ratio of HDR to SDR luminance, normalizes it by hdrmax,
+// then applies a Rec.709-like gamma curve; the result is a single grayscale map.
 private func getGainMap(hdrInput: CIImage, sdrInput: CIImage, hdrMax: Float) -> CIImage {
     let filter = GainMapFilter()
     filter.HDRImage = hdrInput
@@ -296,6 +311,9 @@ private func getGainMap(hdrInput: CIImage, sdrInput: CIImage, hdrMax: Float) -> 
     let outputImage = filter.outputImage
     return outputImage!
 }
+
+// Runs the RGBGainMap kernel (per-channel gain map, used for ISO gain map).
+// Each channel is mapped by log2((hdr+k)/(sdr+k)) / log2(hdrmax), then clamped to [0,1].
 private func getRGBGainMap(hdrInput: CIImage, sdrInput: CIImage, hdrMax: Float) -> CIImage {
     let filter = RGBGainMapFilter()
     filter.HDRImage = hdrInput
@@ -313,7 +331,10 @@ func lanczosResizeImage(_ image: CIImage) -> CIImage {
     return lanczosScaleFilter.outputImage!
 }
 
-func maxLuminance(_ image: CIImage) -> Float? {
+// Returns the peak channel value of the image, used as a headroom estimate.
+// CIAreaMaximum yields the maximum of each channel across the region,
+// so max(r,g,b) is the brightest single channel value in the image.
+func maxChannelValue(_ image: CIImage) -> Float? {
     let extent = image.extent
     let filter = CIFilter.areaMaximum()
     filter.inputImage = image
@@ -334,8 +355,8 @@ func maxLuminance(_ image: CIImage) -> Float? {
     let g = bitmap[1]
     let b = bitmap[2]
     
-    let luminance: Float = max(r,g,b)
-    return luminance
+    let peak: Float = max(r,g,b)
+    return peak
 }
 
 func makeEvenSized(_ image: CIImage) -> CIImage {
@@ -372,6 +393,7 @@ func makeEvenSized(_ image: CIImage) -> CIImage {
     return image.cropped(to: newRect)
 }
 
+// MARK: - Headroom analysis & SDR base generation
 
 var picHeadroom : Float = 1.0
 var picHeadroom2 : Float
@@ -381,11 +403,13 @@ if subsamplingBool {
     hdrImage = makeEvenSized(hdrImage)
 }
 
+// Headroom analysis is skipped when a base image is used without subsampling
 if !(baseImageBool && !subsamplingBool) {
     let transform = CGAffineTransform(scaleX: 1.0 / CGFloat(toneMappingRatio), y: 1.0 / CGFloat(toneMappingRatio))
-    picHeadroom = maxLuminance(hdrImage)!
-    picHeadroom2 = maxLuminance(hdrImage.transformed(by: transform))!
+    picHeadroom = maxChannelValue(hdrImage)!
+    picHeadroom2 = maxChannelValue(hdrImage.transformed(by: transform))!
 
+    // picHeadroom < 1.05 means the input is effectively SDR -> export SDR instead
     if picHeadroom < 1.05 {
         print("Warning: Picture headroom < 1.05, this is an SDR image, outputting SDR image.")
         sdrExport = true
@@ -408,6 +432,9 @@ if !(baseImageBool && !subsamplingBool) {
     }
 }
 
+// Produces the SDR base image used to compute the gain map:
+// uses the user-supplied base image when given and size matches,
+// otherwise tone-maps the HDR image down to SDR via CIToneMapHeadroom.
 func generateSDRImage() -> CIImage?{
     if baseImageBool {
         if CIImage(contentsOf: baseImageURL!) == nil {
@@ -431,6 +458,8 @@ func generateSDRImage() -> CIImage?{
 
 
 
+// MARK: - Export branches
+
 if sdrExport {
     let tonemappedSDRImage = generateSDRImage()!
     let sdrExportOptions = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imageQuality])
@@ -449,9 +478,8 @@ if sdrExport {
     exit(0)
 }
 
-// export subsampled RGB gain map by imageIO
-// there are some compatibility issues
-// not recommended to use
+// Subsampled gain-map export via ImageIO.
+// There are some compatibility issues, not recommended to use.
 if !appleGainMap && subsamplingBool {
 
     let tonemappedSDRImage = generateSDRImage()!
@@ -466,6 +494,8 @@ if !appleGainMap && subsamplingBool {
     var dict: [CFString: Any] = [:]
     var xmlString: String
     
+    // Render gain map into a raw buffer and build matching XMP metadata
+    // (mono => L8, else ARGB8)
     if monochromeExport{
         gainMapDataMono.withUnsafeMutableBytes {
             if let baseAddress = $0.baseAddress {
@@ -522,6 +552,11 @@ if !appleGainMap && subsamplingBool {
     dict[kCGImageAuxiliaryDataInfoDataDescription] = metaDataDescription
     dict[kCGImageAuxiliaryDataInfoColorSpace] = metaDataInfo
 
+    // An ISO gain-map auxiliary-data dict is described by four keys:
+    //   kCGImageAuxiliaryDataInfoData            - raw gain-map pixels (mono L8 or ARGB8)
+    //   kCGImageAuxiliaryDataInfoMetadata        - XMP metadata describing the gain map
+    //   kCGImageAuxiliaryDataInfoDataDescription - pixel format + dimensions of the data
+    //   kCGImageAuxiliaryDataInfoColorSpace      - color space of the gain-map data
     let auxDict = dict as CFDictionary
     let dest = CGImageDestinationCreateWithURL(
         heicExportURL as CFURL,
@@ -530,6 +565,7 @@ if !appleGainMap && subsamplingBool {
         nil
         )
     
+    // A dedicated context forces the output color space of the CGImage base
     let context = CIContext(options: [CIContextOption.outputColorSpace:CGColorSpace(name: sdrColorSpace)!])
     
     var baseCG : CGImage
@@ -539,6 +575,7 @@ if !appleGainMap && subsamplingBool {
         baseCG = context.createCGImage(tonemappedSDRImage, from: tonemappedSDRImage.extent)!
     }
     
+    // Carry over source image properties (e.g. orientation)
     let properties = hdrImage.properties
     
     var exportOptions: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: imageQuality]
@@ -558,11 +595,12 @@ if !appleGainMap && subsamplingBool {
     exit(0)
 }
 
-// export gain map in YUV format (default format)
+// YUV gain map (default). hdrImage is attached as the gain-map source.
 if !appleGainMap {
     var adaptiveExportOptions: NSDictionary
     
     let tonemappedSDRImage = generateSDRImage()!
+    // false = monochrome (L8) gain map, true = RGB gain map
     if monochromeExport {
         adaptiveExportOptions = NSDictionary(dictionary:[kCGImageDestinationLossyCompressionQuality:imageQuality, CIImageRepresentationOption.hdrImage:hdrImage,CIImageRepresentationOption.hdrGainMapAsRGB:false])
     } else {
@@ -583,7 +621,7 @@ if !appleGainMap {
     exit(0)
 }
 
-// -g: Apple HDR gain map by CIFilter
+// Apple gain map (-g) via the custom Metal filter.
 if appleGainMap {
     var gainMap : CIImage
     let tonemappedSDRImage = generateSDRImage()!
@@ -593,6 +631,17 @@ if appleGainMap {
         gainMap = lanczosResizeImage(gainMap)
     }
     
+    // Encode the tone-map parameters into Apple's private MakerNote keys
+    // ("33" selects the gain range, "48" stores the encoded value).
+    // This is the inverse of the decode formulas in Apple's
+    // "Applying Apple HDR effect to your photos", which recover stops from
+    // maker 33/48 as:
+    //   maker33 >= 1  -> stops = 3.0   - 70.0*maker48      (when maker48 <= 0.01)
+    //                    stops = 2.303 - 0.303*maker48
+    //   maker33 <  1  -> stops = 1.8   - 20.0*maker48      (when maker48 <= 0.01)
+    //                    stops = 1.601 - 0.101*maker48
+    // Solving each for maker48 at the target `stops` gives the four cases below.
+    // The 33/48 keys and constants are reverse-engineered / Apple-private.
     let stops = log2(maxHeadroom)
     var imageProperties = hdrImage.properties
     var makerApple = imageProperties[kCGImagePropertyMakerAppleDictionary as String] as? [String: Any] ?? [:]

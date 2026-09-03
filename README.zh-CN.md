@@ -60,7 +60,7 @@ Intel Mac 存在一些问题，并非所有功能都可用。
 - -r \<value\>：SDR 色调映射比率（≥1.0，默认：3.0）
 
     ratio = 1.0：保留全部高光细节
-    ratio >> 10：丢失全部高光细节
+    ratio >> 100：丢失全部高光细节
 
 - -R \<value\>：色调映射的最大 headroom（默认：6.0）
 - -b \<file_path\>：指定基础（base）图像
@@ -113,9 +113,9 @@ Intel Mac 存在一些问题，并非所有功能都可用。
 
  `./toGainMapHDR ~/Downloads/abc.tiff ~/Documents/ -h`
 
-将 RGB gain map（adaptive HDR）文件转换为单色 gain map（Apple HDR）heic 文件：
+将 RGB gain map（adaptive HDR）文件转换为单色 gain map（Apple HDR）heic 文件（`-t -mono` 中的 `-mono` 会被识别为附加文本，输出文件名为 `xxx-mono.heic`）：
 
- `./toGainMapHDR ~/Downloads/abc.heic ~/Downloads/ -g`
+ `./toGainMapHDR ~/Downloads/abc.heic ~/Downloads/ -g -t -mono`
 
 #### 注意：
 

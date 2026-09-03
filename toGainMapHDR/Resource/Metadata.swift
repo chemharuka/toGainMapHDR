@@ -49,7 +49,7 @@ func defaultHDRMetadata(GainMapMax: Float, GainMapMin: Float, RGBType: Int) -> S
         return toneMapHeader(channel + channel + channel)
     case 2: // Mono - 1 channel
         return toneMapHeader(channelBlock(maxStr, minStr))
-    case 3: // Apple
+    case 3: // Apple - reserved for future imageIO Apple gain map export path
         let appleMax = String(format: "%.5f", GainMapMax)
         return """
         <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 6.0.0">

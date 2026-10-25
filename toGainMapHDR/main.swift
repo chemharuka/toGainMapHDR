@@ -479,7 +479,6 @@ if sdrExport {
 }
 
 // Subsampled gain-map export via ImageIO.
-// There are some compatibility issues, not recommended to use.
 if !appleGainMap && subsamplingBool {
 
     let tonemappedSDRImage = generateSDRImage()!
